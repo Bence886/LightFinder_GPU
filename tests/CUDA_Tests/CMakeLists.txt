@@ -11,6 +11,8 @@ add_executable(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} LightFinder_GPU_DLL)
+target_link_libraries(${PROJECT_NAME} gtest gtest_main)
+target_link_libraries(${PROJECT_NAME} gmock gmock_main)
 
 include_directories(
 	${CMAKE_SOURCE_DIR}/dll/headers
