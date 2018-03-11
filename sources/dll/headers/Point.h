@@ -22,7 +22,7 @@ public:
 	bool operator==(const Point &otherPoint)const;
 	Point &operator=(const Point &otherPoint);
 
-	void MultipyByLambda(float l);
+	void MultiplyByLambda(float l);
 	void DevideByLambda(float l);
 	void Normalize();
 	float Length();
@@ -35,6 +35,5 @@ public:
 
 	static Point GetPointOnSphere(const Point &origin);
 	
-private:
-	bool CompFloat(float f1, float f2, float e);
+	static bool CompFloat(float f1, float f2, float e);
 };

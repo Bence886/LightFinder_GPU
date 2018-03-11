@@ -51,7 +51,7 @@ TEST(Point, NOT_EQUALS) {
 	ASSERT_EQ(false, eq);
 }
 
-TEST(POINT, ASSIGN) {
+TEST(Point, ASSIGN) {
 	Point p1(1, 2, 3);
 	Point p2 = p1;
 
@@ -62,7 +62,7 @@ TEST(POINT, ASSIGN) {
 
 TEST(Point, MULTIPLY_BY_LAMBDA) {
 	Point p(1, 2, 3);
-	p.MultipyByLambda(2);
+	p.MultiplyByLambda(2);
 
 	ASSERT_EQ(2, p.X);
 	ASSERT_EQ(4, p.Y);

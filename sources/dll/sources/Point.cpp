@@ -45,7 +45,7 @@ Point & Point::operator=(const Point &otherPoint)
 	return *this;
 }
 
-void Point::MultipyByLambda(float l)
+void Point::MultiplyByLambda(float l)
 {
 	X *= l;
 	Y *= l;
