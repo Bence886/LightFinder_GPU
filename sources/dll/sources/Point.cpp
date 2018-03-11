@@ -78,20 +78,14 @@ Point Point::GetMidlePoint(const Point & p1, const Point & p2)
 	Point midle;
 	midle = p1 + p2;
 	midle.DevideByLambda(2);
-	midle.Normalize();
 
 	return midle;
 }
 
 float Point::DotProduct(const Point & p1, const Point & p2)
 {
-	return (p1.X * p2.X + p1.Y * p2.Y + p1.Z * p2.Z);
-}
-
-float Point::InnerProduct(const Point & p1, const Point & p2)
-{
 	//http://www.lighthouse3d.com/tutorials/maths/inner-product/
-	return p1.X * p2.X + p1.Y * p2.Y + p1.Z * p2.Z;
+	return (p1.X * p2.X + p1.Y * p2.Y + p1.Z * p2.Z);
 }
 
 Point Point::CrossProduct(const Point & p1, const Point & p2)

@@ -30,7 +30,6 @@ public:
 
 	static Point GetMidlePoint(const Point &p1, const Point &p2);
 	static float DotProduct(const Point &p1, const Point &p2);
-	static float InnerProduct(const Point &p1, const Point &p2);
 	static Point CrossProduct(const Point &p1, const Point &p2);
 	static float Distance(const Point &p1, const Point &p2);
 
