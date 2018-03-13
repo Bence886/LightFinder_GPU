@@ -1,7 +1,7 @@
 #include "Vector.h"
 #include "Exception.h"
 
-Vector::Vector(Point location, Point direction)
+Vector::Vector(Point location, Point direction) : Length(1), Location(location)
 {
 	if (Point::CompFloat(direction.Length(), 1.0f, 0.0001f))
 	{
@@ -9,11 +9,9 @@ Vector::Vector(Point location, Point direction)
 	}
 	else
 	{
-		throw Exception();
+		throw Exception("Direction is not  a unit vector!");
 	}
-	Location = location;
 	Direction = direction;
-	Length = 1;
 }
 
 Vector::~Vector()

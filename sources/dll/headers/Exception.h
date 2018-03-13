@@ -1,8 +1,12 @@
 #pragma once
+
+#include <string>
+
 class Exception
 {
 public:
-	Exception();
+	Exception(std::string msg);
 	~Exception();
+	std::string message;
 };
 

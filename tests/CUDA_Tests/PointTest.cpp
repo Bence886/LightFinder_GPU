@@ -5,7 +5,7 @@
 
 #define FLOAT_PRECISION 0.00000001
 
-TEST(Point, Creation) {
+TEST(Point, CREATE) {
 	Point P(1, 2, 3);
 
 	ASSERT_EQ(1, P.X);

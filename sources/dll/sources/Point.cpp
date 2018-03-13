@@ -6,11 +6,8 @@ Point::Point()
 {
 }
 
-Point::Point(float x, float y, float z)
+Point::Point(float x, float y, float z) : X(x), Y(y), Z(z)
 {
-	X = x;
-	Y = y;
-	Z = z;
 }
 
 Point::~Point()
@@ -91,7 +88,8 @@ float Point::DotProduct(const Point & p1, const Point & p2)
 Point Point::CrossProduct(const Point & p1, const Point & p2)
 {
 	//http://www.lighthouse3d.com/tutorials/maths/vector-cross-product/
-	return Point(p1.Y * p2.Z - p1.Z * p2.Y, p1.Z * p2.X - p1.X * p2.Z, p1.X * p2.Y - p1.Y * p2.X);
+	Point  p = Point(p1.Y * p2.Z - p1.Z * p2.Y, p1.Z * p2.X - p1.X * p2.Z, p1.X * p2.Y - p1.Y * p2.X);
+	return p;
 }
 
 float Point::Distance(const Point & p1, const Point & p2)

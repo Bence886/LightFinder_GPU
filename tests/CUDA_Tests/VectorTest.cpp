@@ -4,7 +4,7 @@
 #include "Vector.h"
 #include "Exception.h"
 
-TEST(Vector, CREATION){
+TEST(Vector, CREATE){
 	Vector v(Point(1, 2, 3), Point(0, 0, 1));
 
 	Point p1(1, 2, 3);

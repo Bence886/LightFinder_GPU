@@ -1,11 +1,8 @@
 #include "Exception.h"
 
-
-
-Exception::Exception()
+Exception::Exception(std::string msg):message(msg)
 {
 }
-
 
 Exception::~Exception()
 {
