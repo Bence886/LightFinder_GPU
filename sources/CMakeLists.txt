@@ -10,6 +10,7 @@ enable_language(CXX CUDA)
 add_subdirectory(dll)
 add_subdirectory(main)
 
+add_subdirectory(../dependencies/tinyxml2 ${CMAKE_BINARY_DIR}/dependencies/tinyxml2)
 add_subdirectory(../tests ${CMAKE_BINARY_DIR}/tests)
 
 configure_file(../tests/CMakeLists.txt.in googletest-download/CMakeLists.txt)

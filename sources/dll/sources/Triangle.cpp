@@ -14,6 +14,12 @@ Triangle::~Triangle()
 {
 }
 
+bool Triangle::operator==(const Triangle &otherTriangle) const {
+	return this->p0 == otherTriangle.p0 &&
+		this->p1 == otherTriangle.p1 &&
+		this->p2 == otherTriangle.p2;
+}
+
 Point Triangle::InsideTriangle(Vector ray)
 {	//http://geomalgorithms.com/a06-_intersect-2.html
 	//http://www.lighthouse3d.com/tutorials/maths/ray-triangle-intersection/

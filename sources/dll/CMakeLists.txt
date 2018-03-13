@@ -10,6 +10,7 @@ file(GLOB ${PROJECT_NAME}_sources
 	)
 
 include_directories(${CMAKE_SOURCE_DIR}/dll/headers)
+include_directories(${CMAKE_SOURCE_DIR}/../dependencies/tinyxml2)
 	
 add_library(${PROJECT_NAME} STATIC
 				${${PROJECT_NAME}_sources}
@@ -22,3 +23,5 @@ set_target_properties(${PROJECT_NAME}
 					   
 set_target_properties(${PROJECT_NAME} 
 					   PROPERTIES POSITION_INDEPENDENT_CODE ON)
+					   
+target_link_libraries(${PROJECT_NAME} TinyXML2)

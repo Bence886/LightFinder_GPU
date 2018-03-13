@@ -68,3 +68,17 @@ TEST(Triangle, InsideTriangle) {
 
 	ASSERT_EQ(R, H);
 }
+
+TEST(Triangle, EQUALS) {
+	Point p0(10, -10, 3);
+	Point p1(10, 10, 3);
+	Point p2(-10, -10, 3);
+	Triangle T1(p0, p1, p2);
+
+	Point p3(10, -10, 3);
+	Point p4(10, 10, 3);
+	Point p5(-10, -10, 3);
+	Triangle T2(p3, p4, p5);
+
+	ASSERT_EQ(T1, T2);
+}

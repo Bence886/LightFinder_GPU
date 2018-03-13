@@ -18,6 +18,8 @@ public:
 
 	Point *normal;
 
+	bool operator==(const Triangle &otherTriangle) const;
+
 	Point InsideTriangle(Vector ray);
 
 	static Triangle &ClosestTriangleHit(std::vector<Triangle> triangles, Vector ray);
