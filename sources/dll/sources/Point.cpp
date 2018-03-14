@@ -1,5 +1,6 @@
 #include "Point.h"
 
+#include <sstream>
 #include "math.h"
 
 Point::Point()
@@ -68,6 +69,15 @@ void Point::Normalize()
 float Point::Length()
 {
 	return Distance(Point(0, 0, 0), *this);
+}
+
+std::string Point::ToFile()
+{
+	std::stringstream ss;
+
+	ss << "(" << X << ", " << Y << ", " << Z << ")";
+
+	return ss.str();
 }
 
 Point Point::GetMidlePoint(const Point & p1, const Point & p2)

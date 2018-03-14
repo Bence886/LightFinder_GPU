@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "cuda_runtime.h"
 
 #ifdef __CUDACC__
@@ -26,6 +28,7 @@ public:
 	void DevideByLambda(float l);
 	void Normalize();
 	float Length();
+	std::string ToFile();
 
 
 	static Point GetMidlePoint(const Point &p1, const Point &p2);

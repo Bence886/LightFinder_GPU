@@ -18,11 +18,20 @@ bool Camera::operator==(const Camera & otherCamera) const
 		this->sampling == otherCamera.sampling;
 }
 
-void Camera::StartTrace()
+void Camera::StartCPUTrace()
 {
 }
 
-float Camera::Trace(const std::vector<LightSource>& lights, const std::vector<Triangle>& triangles, Vector * ray, int dept)
+void Camera::StartGPUTrace()
+{
+}
+
+float Camera::CpuTrace(const std::vector<LightSource>& lights, const std::vector<Triangle>& triangles, Vector * ray, int dept)
+{
+	return 0.0f;
+}
+
+float Camera::GPUTrace()
 {
 	return 0.0f;
 }

@@ -133,3 +133,11 @@ TEST(Point, DISTANCE) {
 
 	ASSERT_NEAR(5.91608, f, FLOAT_PRECISION);
 }
+
+TEST(Point, TO_FILE) {
+	Point p1(3, 5, 7);
+
+	std::string s = p1.ToFile();
+
+	ASSERT_EQ("(3, 5, 7)", s);
+}
