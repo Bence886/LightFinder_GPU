@@ -6,11 +6,11 @@
 
 #include "Point.h"
 
-class BelnderScriptCreator
+class BlenderScriptCreator
 {
 public:
-	BelnderScriptCreator(std::string filename);
-	~BelnderScriptCreator();
+	BlenderScriptCreator(std::string filename);
+	~BlenderScriptCreator();
 
 	void CreateObject(std::vector<Point> points, std::string objName);
 
