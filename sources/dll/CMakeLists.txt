@@ -9,8 +9,8 @@ file(GLOB ${PROJECT_NAME}_sources
 	"sources/*.cu" 
 	)
 
-include_directories(${CMAKE_SOURCE_DIR}/dll/headers)
-include_directories(${CMAKE_SOURCE_DIR}/../dependencies/tinyxml2)
+include_directories(${CMAKE_SOURCE_DIR}/sources/dll/headers)
+include_directories(${CMAKE_SOURCE_DIR}/dependencies/tinyxml2)
 	
 add_library(${PROJECT_NAME} STATIC
 				${${PROJECT_NAME}_sources}
