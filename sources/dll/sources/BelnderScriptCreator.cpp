@@ -27,8 +27,8 @@ void BlenderScriptCreator::CreateObject(std::vector<Point> points, std::string o
 		}
 		ofs << "]\n";
 
-		ofs << "create_Vertices(";
+		ofs << "create_Vertices(\"";
 		ofs << objName;
-		ofs << ", verts)\n";
+		ofs << "\", verts)\n";
 	}
 }

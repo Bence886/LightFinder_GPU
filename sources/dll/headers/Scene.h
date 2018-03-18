@@ -15,7 +15,7 @@ public:
 
 	std::vector<LightSource> lights;
 	std::vector<Triangle> triangles;
-	std::vector<Camera> cameras;
+	std::vector<Camera*> cameras;
 
 	void StartTrace_CPU();
 

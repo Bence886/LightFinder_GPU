@@ -20,11 +20,11 @@ public:
 
 	bool operator==(const Camera &otherCamera)const;
 
-	void StartCPUTrace();
+	void StartCPUTrace(std::vector<LightSource> lights, std::vector<Triangle> triangles);
 	void StartGPUTrace();
 private:
 	float CpuTrace(const std::vector<LightSource> &lights,const std::vector<Triangle> &triangles, Vector *ray, int dept);
 	float GPUTrace();
-	LightSource &LightHitBeforeTriangle(const LightSource &light, const std::vector<Triangle> *triangles, const Vector &ray);
+	bool LightHitBeforeTriangle(const LightSource &light, const std::vector<Triangle> *triangles, const Vector &ray);
 };
 

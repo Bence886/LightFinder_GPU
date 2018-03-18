@@ -19,5 +19,5 @@ public:
 
 	std::vector<LightSource> GetLightSources();
 	std::vector<Triangle> GetTriangles();
-	std::vector<Camera> GetCameras();
+	std::vector<Camera*> GetCameras();
 };

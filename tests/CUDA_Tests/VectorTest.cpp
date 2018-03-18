@@ -2,7 +2,7 @@
 #include "gmock\gmock.h"
 
 #include "Vector.h"
-#include "Exception.h"
+#include "MyException.h"
 
 TEST(Vector, CREATE){
 	Vector v(Point(1, 2, 3), Point(0, 0, 1));
@@ -16,7 +16,7 @@ TEST(Vector, CREATE){
 }
 
 TEST(Vector, CTOR_THROWS_EXCEPTION) {
-	ASSERT_THROW(Vector v(Point(1, 2, 3), Point(0, 1, 1)); , Exception);
+	ASSERT_THROW(Vector v(Point(1, 2, 3), Point(0, 1, 1)); , MyException);
 }
 
 TEST(Vector, GET_END_POINT) {

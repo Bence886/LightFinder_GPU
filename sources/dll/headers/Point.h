@@ -23,6 +23,7 @@ public:
 	Point &operator+(const Point &otherPoint)const;
 	bool operator==(const Point &otherPoint)const;
 	Point &operator=(const Point &otherPoint);
+	Point &operator+=(const Point &otherPoint);
 
 	void MultiplyByLambda(float l);
 	void DevideByLambda(float l);
@@ -36,7 +37,5 @@ public:
 	static Point CrossProduct(const Point &p1, const Point &p2);
 	static float Distance(const Point &p1, const Point &p2);
 
-	static Point GetPointOnSphere(const Point &origin);
-	
 	static bool CompFloat(float f1, float f2, float e);
 };

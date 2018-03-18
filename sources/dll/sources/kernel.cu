@@ -5,26 +5,19 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
-#include "Point.h"
+#include "Scene.h"
+#include "BelnderScriptCreator.h"
 
-__device__ Point* d_P;
-Point P(1, 1, 1);
-
-__global__ void ASD()
+void Start()
 {
-	d_P->X++;
-}
+	Scene s("In.xml");
 
-void Init()
-{
+	s.StartTrace_CPU();
 
-	cudaMemcpyToSymbol(d_P, &P, sizeof(Point));
+	BlenderScriptCreator bs("Blender.txt");
 
-	ASD << <1, 1 >> > ();
-
-	cudaMemcpyFromSymbol(&P, d_P, sizeof(Point));
-
-	std::cout << P.X << std::endl;
-
-	std::getchar();
+	for (Camera *item : s.cameras)
+	{
+		bs.CreateObject(item->lookDirections, "Camera");
+	}	
 }

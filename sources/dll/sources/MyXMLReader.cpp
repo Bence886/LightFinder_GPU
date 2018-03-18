@@ -17,7 +17,7 @@ std::vector<LightSource> MyXMLReader::GetLightSources()
 
 		tinyxml2::XMLElement *lightsElement = doc.FirstChildElement("root")->FirstChildElement("lights");
 
-		for (tinyxml2::XMLElement* child = lightsElement->FirstChildElement(); child; child = child->NextSiblingElement())
+		for (tinyxml2::XMLElement* child = lightsElement->FirstChildElement("light"); child; child = child->NextSiblingElement())
 		{
 			lights.push_back(
 				LightSource(
@@ -39,7 +39,7 @@ std::vector<Triangle> MyXMLReader::GetTriangles()
 
 	tinyxml2::XMLElement *trianglesElement = doc.FirstChildElement("root")->FirstChildElement("triangles");
 
-	for (tinyxml2::XMLElement* child = trianglesElement->FirstChildElement(); child; child = child->NextSiblingElement())
+	for (tinyxml2::XMLElement* child = trianglesElement->FirstChildElement("triangle"); child; child = child->NextSiblingElement())
 	{
 		triangles.push_back(
 			Triangle(
@@ -53,16 +53,16 @@ std::vector<Triangle> MyXMLReader::GetTriangles()
 	return triangles;
 }
 
-std::vector<Camera> MyXMLReader::GetCameras()
+std::vector<Camera*> MyXMLReader::GetCameras()
 {
-	std::vector<Camera> cameras;
+	std::vector<Camera*> cameras;
 
 	tinyxml2::XMLElement *cameraElement = doc.FirstChildElement("root")->FirstChildElement("cameras");
 
-	for (tinyxml2::XMLElement* child = cameraElement->FirstChildElement(); child; child = child->NextSiblingElement())
+	for (tinyxml2::XMLElement* child = cameraElement->FirstChildElement("camera"); child; child = child->NextSiblingElement())
 	{
 		cameras.push_back(
-			Camera(
+			new Camera(
 				Point(atof(child->Attribute("posx")), atof(child->Attribute("posy")), atof(child->Attribute("posz")))));
 	}
 

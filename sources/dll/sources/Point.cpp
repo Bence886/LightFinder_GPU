@@ -43,6 +43,15 @@ Point & Point::operator=(const Point &otherPoint)
 	return *this;
 }
 
+Point & Point::operator+=(const Point & otherPoint)
+{
+	this->X += otherPoint.X;
+	this->Y += otherPoint.Y;
+	this->Z += otherPoint.Z;
+
+	return *this;
+}
+
 void Point::MultiplyByLambda(float l)
 {
 	X *= l;
@@ -105,11 +114,6 @@ Point Point::CrossProduct(const Point & p1, const Point & p2)
 float Point::Distance(const Point & p1, const Point & p2)
 {
 	return sqrt((p1.X - p2.X) * (p1.X - p2.X) + (p1.Y - p2.Y) * (p1.Y - p2.Y) + (p1.Z - p2.Z) * (p1.Z - p2.Z));
-}
-
-Point Point::GetPointOnSphere(const Point & origin)
-{
-	return Point();
 }
 
 bool Point::CompFloat(float f1, float f2, float e)

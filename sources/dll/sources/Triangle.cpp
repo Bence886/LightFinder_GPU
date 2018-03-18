@@ -1,6 +1,7 @@
 #include "Triangle.h"
 
-#include "Exception.h"
+#include "MyException.h"
+#include "Log.h"
 
 Triangle::Triangle(Point p0, Point p1, Point p2)
 {
@@ -32,7 +33,7 @@ Point Triangle::InsideTriangle(Vector ray)
 
 	if (a > -0.00001 && a < 0.00001)
 	{
-		throw new Exception("No Hit!");
+		throw MyException("No Hit!");
 	}
 
 	f = 1 / a;
@@ -40,7 +41,7 @@ Point Triangle::InsideTriangle(Vector ray)
 	u = f * (Point::DotProduct(s, h));
 	if (u < 0.0 || u > 1.0)
 	{
-		throw new Exception("No Hit!");
+		throw MyException("No Hit!");
 	}
 
 	q = Point::CrossProduct(s, e1);
@@ -48,7 +49,7 @@ Point Triangle::InsideTriangle(Vector ray)
 	v = f * Point::DotProduct(ray.Direction, q);
 	if (v < 0.0 || u + v > 1.0)
 	{
-		throw new Exception("No Hit!");
+		throw MyException("No Hit!");
 	}
 	float t = f * Point::DotProduct(e2, q);
 	if (t > 0.00001)
@@ -58,33 +59,7 @@ Point Triangle::InsideTriangle(Vector ray)
 			ray.Location.Y + ray.Direction.Y * t,
 			ray.Location.Z + ray.Direction.Z * t);
 	}
-	throw new Exception("No Hit!");
-}
-
-Triangle &Triangle::ClosestTriangleHit(std::vector<Triangle> triangles, Vector ray)
-{
-	Point *closest;
-	Triangle *hitTriangle = NULL;
-	for(Triangle item : triangles)
-	{
-		try
-		{
-			Point hit = item.InsideTriangle(ray);
-			if (closest || Point::Distance(ray.Location, hit) < Point::Distance(ray.Location, *closest))
-			{
-				hitTriangle = &item;
-				closest = &hit;
-			}
-		}
-		catch (Exception)
-		{
-		}
-	}
-	if (hitTriangle)
-	{
-		throw new Exception("No triangle hit!");
-	}
-	return *hitTriangle;
+	throw MyException("No Hit!");
 }
 
 void Triangle::CalcNormal()
@@ -94,4 +69,45 @@ void Triangle::CalcNormal()
 
 	normal = &Point::CrossProduct(u, v);
 	normal->Normalize();
+}
+
+float Triangle::RandomNumber(float Min, float Max)
+{
+	return ((float(rand()) / float(RAND_MAX)) * (Max - Min)) + Min;
+}
+
+Point Triangle::GetPointOnSphere(const Point & origin)
+{
+	Point randomPoint(RandomNumber(-1, 1), RandomNumber(-1, 1), RandomNumber(-1, 1));
+	while (randomPoint.Length() > 1)
+	{
+		randomPoint = Point(RandomNumber(-1, 1), RandomNumber(-1, 1), RandomNumber(-1, 1));
+	}
+	randomPoint.Normalize();
+	return randomPoint;
+}
+
+Point Triangle::GetPointOnHalfSphere(Triangle hitTriangle, bool backfacing)
+{
+	Point normal = *hitTriangle.normal;
+	if (backfacing)
+	{
+		normal.MultiplyByLambda(-1);
+	}
+	Point direction = Point::CrossProduct(normal, hitTriangle.p1 - hitTriangle.p0);
+	direction.Normalize();
+	Point cross = Point::CrossProduct(normal, direction);
+
+	float x, y, z;
+	x = RandomNumber(-1, 1);
+	y = RandomNumber(-1, 1);
+	z = RandomNumber(0, 1);
+
+	Point randomPoint(
+		x * direction.X + y * cross.X + z * normal.X,
+		x * direction.Y + y * cross.Y + z * normal.Y,
+		x * direction.Z + y * cross.Z + z * normal.Z);
+
+	randomPoint.Normalize();
+	return randomPoint;
 }

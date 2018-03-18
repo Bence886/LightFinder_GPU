@@ -28,7 +28,7 @@ TEST(MyXMLReader, PARSE_TRIANGLES) {
 TEST(MyXMLReader, PARSE_CAMERAS) {
 	MyXMLReader xmlReader("In.xml");
 
-	std::vector<Camera> cameras = xmlReader.GetCameras();
+	std::vector<Camera*> cameras = xmlReader.GetCameras();
 
-	ASSERT_EQ(Camera(Point(0, 0, 0)), cameras.front());
+	ASSERT_EQ(Camera(Point(0, 0, 0)), *cameras.front());
 }

@@ -1,7 +1,7 @@
 #include "LightSource.h"
 
 #include "math.h"
-#include "Exception.h"
+#include "MyException.h"
 
 LightSource::LightSource(Point loc, float intensity) : location(loc), intensity(intensity)
 {
@@ -38,7 +38,7 @@ LightSource &LightSource::ClosestLightHit(std::vector<LightSource> lights, Vecto
 	}
 	if (closest)
 	{
-		throw new Exception("No light hit");
+		throw MyException("No light hit");
 	}
 	return *closest;
 }

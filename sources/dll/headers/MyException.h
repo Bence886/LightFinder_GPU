@@ -2,11 +2,11 @@
 
 #include <string>
 
-class Exception
+class MyException
 {
 public:
-	Exception(std::string msg);
-	~Exception();
+	MyException(std::string msg);
+	~MyException();
 	std::string message;
 };
 
