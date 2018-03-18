@@ -3,7 +3,7 @@
 #include <iostream>
 
 bool Log::DoLog = true;
-Log::LogLevel Log::currentLogLevel = Log::Debug;
+Log::LogLevel Log::currentLogLevel = Log::Trace;
 std::ofstream Log::ofs;
 
 void Log::WriteLogFunction(std::string msg, bool console, LogLevel level)

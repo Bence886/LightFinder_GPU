@@ -12,17 +12,17 @@ TEST(MyXMLReader, LOAD_PARSE) {
 TEST(MyXMLReader, PARSE_LIGHTS) {
 	MyXMLReader xmlReader("In.xml");
 
-	std::vector<LightSource> lights = xmlReader.GetLightSources();
+	std::vector<LightSource*> lights = xmlReader.GetLightSources();
 
-	ASSERT_EQ(LightSource(Point(0, 0, 10), 10), lights.front());
+	ASSERT_EQ(LightSource(Point(0, 0, 10), 10), *lights.front());
 }
 
 TEST(MyXMLReader, PARSE_TRIANGLES) {
 	MyXMLReader xmlReader("In.xml");
 
-	std::vector<Triangle> triangles = xmlReader.GetTriangles();
+	std::vector<Triangle*> triangles = xmlReader.GetTriangles();
 
-	ASSERT_EQ(Triangle(Point(10, -10, 5), Point(10, 10, 5), Point(-10, 10, 5)), triangles.front());
+	ASSERT_EQ(Triangle(Point(10, -10, 5), Point(10, 10, 5), Point(-10, 10, 5)), *triangles.front());
 }
 
 TEST(MyXMLReader, PARSE_CAMERAS) {

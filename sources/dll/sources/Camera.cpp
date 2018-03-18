@@ -26,7 +26,7 @@ bool Camera::operator==(const Camera & otherCamera) const
 		this->sampling == otherCamera.sampling;
 }
 
-void Camera::StartCPUTrace(std::vector<LightSource> lights, std::vector<Triangle> triangles)
+void Camera::StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangle*> triangles)
 {
 	for (int i = 0; i < sampling; i++)
 	{
@@ -35,7 +35,12 @@ void Camera::StartCPUTrace(std::vector<LightSource> lights, std::vector<Triangle
 		WriteLog(std::string("New ray started to: ") + vector.Direction.ToFile() + " from origin, on camera: " + origin.ToFile(), true, Log::Debug);
 		float a = CpuTrace(lights, triangles, &vector, maxDept);
 		ray.MultiplyByLambda(a);
-		lookDirections.push_back(ray);
+		if (a != 0)
+		{
+			lookDirections.push_back(ray);
+
+		}		
+		WriteLog(std::string("Look direction found: ") + ray.ToFile(), true, Log::Trace);
 	}
 }
 
@@ -43,17 +48,17 @@ void Camera::StartGPUTrace()
 {
 }
 
-float Camera::CpuTrace(const std::vector<LightSource>& lights, const std::vector<Triangle> &triangles, Vector * startPoint, int dept)
+float Camera::CpuTrace(const std::vector<LightSource*>& lights, const std::vector<Triangle*> triangles, Vector * startPoint, int dept)
 {
 	for (int i = 0; i < dept; i++)
 	{
-		std::vector<LightSource> directHitLights;
+		std::vector<LightSource*> directHitLights;
 		Point rayToPoint;
-		for (LightSource item : lights)
+		for (LightSource *item : lights)
 		{
-			rayToPoint = item.location - startPoint->Location;
+			rayToPoint = item->location - startPoint->Location;
 			rayToPoint.Normalize();
-			if (LightHitBeforeTriangle(item, &triangles, Vector(startPoint->Location, rayToPoint)))
+			if (LightHitBeforeTriangle(*item, triangles, Vector(startPoint->Location, rayToPoint)))
 			{
 				directHitLights.push_back(item);
 			}
@@ -62,15 +67,15 @@ float Camera::CpuTrace(const std::vector<LightSource>& lights, const std::vector
 		{
 			int max = 0;
 			int idx = 0;
-			for (LightSource item : directHitLights)
+			for (LightSource *item : directHitLights)
 			{
-				if (directHitLights[max].intensity < item.intensity)
+				if (directHitLights[max]->intensity < item->intensity)
 				{
 					max = idx;
 				}
 				idx++;
 			}
-			return directHitLights[max].intensity;
+			return directHitLights[max]->intensity;
 		}
 		try
 		{
@@ -100,11 +105,11 @@ float Camera::GPUTrace()
 	return 0.0f;
 }
 
-bool Camera::LightHitBeforeTriangle(const LightSource & light, const std::vector<Triangle>* triangles, const Vector & ray)
+bool Camera::LightHitBeforeTriangle(const LightSource & light, const std::vector<Triangle*> triangles, const Vector & ray)
 {
 	try
 	{
-		std::pair<Triangle, Point> TrianglePointPair = Triangle::ClosestTriangleHit(*triangles, ray);
+		std::pair<Triangle, Point> TrianglePointPair = Triangle::ClosestTriangleHit(triangles, ray);
 
 		Point pointHit = TrianglePointPair.second;
 		if (Point::Distance(light.location ,ray.Location) < Point::Distance(pointHit, ray.Location))
@@ -122,18 +127,18 @@ bool Camera::LightHitBeforeTriangle(const LightSource & light, const std::vector
 	return true;
 }
 
-std::pair<Triangle, Point> &Triangle::ClosestTriangleHit(std::vector<Triangle> triangles, Vector ray)
+std::pair<Triangle, Point> &Triangle::ClosestTriangleHit(std::vector<Triangle*> triangles, Vector ray)
 {
 	Point *closest = NULL;
 	Triangle *hitTriangle = NULL;
-	for (Triangle item : triangles)
+	for (Triangle *item : triangles)
 	{
 		try
 		{
-			Point hit = item.InsideTriangle(ray);
+			Point hit = item->InsideTriangle(ray);
 			if (!closest || (Point::Distance(ray.Location, hit) < Point::Distance(ray.Location, *closest)))
 			{
-				hitTriangle = &item;
+				hitTriangle = item;
 				closest = &hit;
 			}
 		}

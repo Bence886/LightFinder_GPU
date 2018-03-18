@@ -17,6 +17,8 @@ Scene::~Scene()
 
 void Scene::StartTrace_CPU()
 {
+	CreateFloor(-1);
+
 	WriteLog("CPU trace started: ", true, Log::Message);
 	WriteLog(std::string("Sampling: ") + std::to_string(cameras[0]->sampling), true, Log::Debug);
 
@@ -28,8 +30,8 @@ void Scene::StartTrace_CPU()
 
 void Scene::CreateFloor(float z)
 {
-	triangles.push_back(Triangle(Point(100, -100, z), Point(100, 100, z), Point(-100, 100, z)));
-	triangles.push_back(Triangle(Point(-100, 100, z), Point(-100, -100, z), Point(100, -100, z)));
+	triangles.push_back(new Triangle(Point(100, -100, z), Point(100, 100, z), Point(-100, 100, z)));
+	triangles.push_back(new Triangle(Point(-100, 100, z), Point(-100, -100, z), Point(100, -100, z)));
 }
 
 void Scene::ReadInputFile(std::string filename)

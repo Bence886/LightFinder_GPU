@@ -13,8 +13,8 @@ public:
 	Scene(std::string filename);
 	~Scene();
 
-	std::vector<LightSource> lights;
-	std::vector<Triangle> triangles;
+	std::vector<LightSource*> lights;
+	std::vector<Triangle*> triangles;
 	std::vector<Camera*> cameras;
 
 	void StartTrace_CPU();

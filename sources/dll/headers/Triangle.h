@@ -23,7 +23,7 @@ public:
 
 	Point InsideTriangle(Vector ray);
 
-	static std::pair<Triangle, Point> &ClosestTriangleHit(std::vector<Triangle> triangles, Vector ray);
+	static std::pair<Triangle, Point> &ClosestTriangleHit(std::vector<Triangle*> triangles, Vector ray);
 
 	static Point GetPointOnSphere(const Point &origin);
 	static Point GetPointOnHalfSphere(Triangle triangle, bool backfacing);

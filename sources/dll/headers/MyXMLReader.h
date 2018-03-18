@@ -17,7 +17,7 @@ public:
 
 	tinyxml2::XMLDocument doc;
 
-	std::vector<LightSource> GetLightSources();
-	std::vector<Triangle> GetTriangles();
+	std::vector<LightSource*> GetLightSources();
+	std::vector<Triangle*> GetTriangles();
 	std::vector<Camera*> GetCameras();
 };

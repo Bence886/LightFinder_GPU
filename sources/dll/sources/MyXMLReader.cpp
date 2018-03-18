@@ -10,17 +10,17 @@ MyXMLReader::~MyXMLReader()
 {
 }
 
-std::vector<LightSource> MyXMLReader::GetLightSources()
+std::vector<LightSource*> MyXMLReader::GetLightSources()
 {
 	{
-		std::vector<LightSource> lights;
+		std::vector<LightSource*> lights;
 
 		tinyxml2::XMLElement *lightsElement = doc.FirstChildElement("root")->FirstChildElement("lights");
 
 		for (tinyxml2::XMLElement* child = lightsElement->FirstChildElement("light"); child; child = child->NextSiblingElement())
 		{
 			lights.push_back(
-				LightSource(
+				new LightSource(
 					Point(atof(child->Attribute("posx")),
 						atof(child->Attribute("posy")),
 						atof(child->Attribute("posz"))),
@@ -33,16 +33,16 @@ std::vector<LightSource> MyXMLReader::GetLightSources()
 	}
 }
 
-std::vector<Triangle> MyXMLReader::GetTriangles()
+std::vector<Triangle*> MyXMLReader::GetTriangles()
 {
-	std::vector<Triangle> triangles;
+	std::vector<Triangle*> triangles;
 
 	tinyxml2::XMLElement *trianglesElement = doc.FirstChildElement("root")->FirstChildElement("triangles");
 
 	for (tinyxml2::XMLElement* child = trianglesElement->FirstChildElement("triangle"); child; child = child->NextSiblingElement())
 	{
 		triangles.push_back(
-			Triangle(
+			new Triangle(
 				Point(atof(child->FirstChildElement("point0")->Attribute("posx")), atof(child->FirstChildElement("point0")->Attribute("posy")), atof(child->FirstChildElement("point0")->Attribute("posz"))),
 				Point(atof(child->FirstChildElement("point1")->Attribute("posx")), atof(child->FirstChildElement("point1")->Attribute("posy")), atof(child->FirstChildElement("point1")->Attribute("posz"))),
 				Point(atof(child->FirstChildElement("point2")->Attribute("posx")), atof(child->FirstChildElement("point2")->Attribute("posy")), atof(child->FirstChildElement("point2")->Attribute("posz")))

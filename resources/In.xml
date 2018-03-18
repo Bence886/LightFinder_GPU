@@ -8,11 +8,6 @@
         <point1 posx="10" posy="10" posz="5"/>
         <point2 posx="-10" posy="10" posz="5"/>
     </triangle>
-	<triangle>
-        <point0 posx="-10" posy="10" posz="5"/>
-        <point1 posx="-10" posy="-10" posz="5"/>
-        <point2 posx="10" posy="-10" posz="5"/>
-    </triangle>
   </triangles>
   <cameras>
     <camera posx="0" posy="0" posz="0"/>
