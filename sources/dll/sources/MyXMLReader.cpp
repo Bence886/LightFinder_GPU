@@ -1,5 +1,7 @@
 #include "MyXMLReader.h"
 
+#include "Log.h"
+
 MyXMLReader::MyXMLReader(std::string filename)
 {
 	doc.LoadFile(filename.c_str());
@@ -12,29 +14,29 @@ MyXMLReader::~MyXMLReader()
 
 std::vector<LightSource*> MyXMLReader::GetLightSources()
 {
+	WriteLog("Parsing lights", true, Log::Debug);
+	std::vector<LightSource*> lights;
+
+	tinyxml2::XMLElement *lightsElement = doc.FirstChildElement("root")->FirstChildElement("lights");
+
+	for (tinyxml2::XMLElement* child = lightsElement->FirstChildElement("light"); child; child = child->NextSiblingElement())
 	{
-		std::vector<LightSource*> lights;
-
-		tinyxml2::XMLElement *lightsElement = doc.FirstChildElement("root")->FirstChildElement("lights");
-
-		for (tinyxml2::XMLElement* child = lightsElement->FirstChildElement("light"); child; child = child->NextSiblingElement())
-		{
-			lights.push_back(
-				new LightSource(
-					Point(atof(child->Attribute("posx")),
-						atof(child->Attribute("posy")),
-						atof(child->Attribute("posz"))),
-					atof(child->Attribute("intensity"))
-				)
-			);
-		}
-
-		return lights;
+		lights.push_back(
+			new LightSource(
+				Point(atof(child->Attribute("posx")),
+					atof(child->Attribute("posy")),
+					atof(child->Attribute("posz"))),
+				atof(child->Attribute("intensity"))
+			)
+		);
 	}
+	WriteLog(std::string("Lights found: ") + std::to_string(lights.size()), true, Log::Debug);
+	return lights;
 }
 
 std::vector<Triangle*> MyXMLReader::GetTriangles()
 {
+	WriteLog("Parsing treiangles", true, Log::Debug);
 	std::vector<Triangle*> triangles;
 
 	tinyxml2::XMLElement *trianglesElement = doc.FirstChildElement("root")->FirstChildElement("triangles");
@@ -49,12 +51,13 @@ std::vector<Triangle*> MyXMLReader::GetTriangles()
 			)
 		);
 	}
-
+	WriteLog(std::string("Triangles found: ") + std::to_string(triangles.size()), true, Log::Debug);
 	return triangles;
 }
 
 std::vector<Camera*> MyXMLReader::GetCameras()
 {
+	WriteLog("Parsing cameras", true, Log::Debug);
 	std::vector<Camera*> cameras;
 
 	tinyxml2::XMLElement *cameraElement = doc.FirstChildElement("root")->FirstChildElement("cameras");
@@ -65,7 +68,7 @@ std::vector<Camera*> MyXMLReader::GetCameras()
 			new Camera(
 				Point(atof(child->Attribute("posx")), atof(child->Attribute("posy")), atof(child->Attribute("posz")))));
 	}
-
+	WriteLog(std::string("Cameras found: ") + std::to_string(cameras.size()), true, Log::Debug);
 	return cameras;
 }
 

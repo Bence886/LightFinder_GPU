@@ -32,6 +32,7 @@ void Scene::CreateFloor(float z)
 {
 	triangles.push_back(new Triangle(Point(100, -100, z), Point(100, 100, z), Point(-100, 100, z)));
 	triangles.push_back(new Triangle(Point(-100, 100, z), Point(-100, -100, z), Point(100, -100, z)));
+	WriteLog(std::string("Created floor at z level: ") + std::to_string(z), true, Log::Debug);
 }
 
 void Scene::ReadInputFile(std::string filename)

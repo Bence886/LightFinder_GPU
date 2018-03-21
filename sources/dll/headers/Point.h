@@ -19,23 +19,23 @@ public:
 
 	float X, Y, Z;
 	
-	Point &operator-(const Point &otherPoint)const;
-	Point &operator+(const Point &otherPoint)const;
-	bool operator==(const Point &otherPoint)const;
-	Point &operator=(const Point &otherPoint);
-	Point &operator+=(const Point &otherPoint);
+	CUDA_CALLABLE_MEMBER Point &operator-(const Point &otherPoint)const;
+	CUDA_CALLABLE_MEMBER Point &operator+(const Point &otherPoint)const;
+	CUDA_CALLABLE_MEMBER bool operator==(const Point &otherPoint)const;
+	CUDA_CALLABLE_MEMBER Point &operator=(const Point &otherPoint);
+	CUDA_CALLABLE_MEMBER Point &operator+=(const Point &otherPoint);
 
-	void MultiplyByLambda(float l);
-	void DevideByLambda(float l);
-	void Normalize();
-	float Length();
+	CUDA_CALLABLE_MEMBER void MultiplyByLambda(float l);
+	CUDA_CALLABLE_MEMBER void DevideByLambda(float l);
+	CUDA_CALLABLE_MEMBER void Normalize();
+	CUDA_CALLABLE_MEMBER float Length();
 	std::string ToFile();
 
 
-	static Point GetMidlePoint(const Point &p1, const Point &p2);
-	static float DotProduct(const Point &p1, const Point &p2);
-	static Point CrossProduct(const Point &p1, const Point &p2);
-	static float Distance(const Point &p1, const Point &p2);
+	CUDA_CALLABLE_MEMBER static Point GetMidlePoint(const Point &p1, const Point &p2);
+	CUDA_CALLABLE_MEMBER static float DotProduct(const Point &p1, const Point &p2);
+	CUDA_CALLABLE_MEMBER static Point CrossProduct(const Point &p1, const Point &p2);
+	CUDA_CALLABLE_MEMBER static float Distance(const Point &p1, const Point &p2);
 
-	static bool CompFloat(float f1, float f2, float e);
+	CUDA_CALLABLE_MEMBER static bool CompFloat(float f1, float f2, float e);
 };

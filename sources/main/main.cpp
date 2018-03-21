@@ -5,12 +5,25 @@
 #include "kernel.cuh"
 #include "Log.h"
 
-int main()
+void Init()
 {
 	Log::InitLog();
-	WriteLog("Program started!", true, Log::Message);
+	WriteLog(std::string("Log initialized, log level: ") , true, Log::Message);
+}
 
-	Start();
+
+int main()
+{
+	Init();
+
+	ProcessInput();
+	
+	StartCPU();
+	//StartGPU
+
+	WriteOutput();
+
+	Close();
 	
 	WriteLog("Program finished!", true, Log::Message);
 	std::getchar();
