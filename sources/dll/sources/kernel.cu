@@ -5,10 +5,14 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
+#include "Trace.cuh"
+
 #include "Log.h"
 
 #define OUTPUT_NAME "Blender.txt"
 #define INPUT_NAME "In.xml"
+
+#define cudaCheckError() {cudaError_t e = cudaGetLastError();WriteLog(std::string("CUDA result:") + cudaGetErrorString(e), true, Log::Message);}
 
 Scene *myScene;
 
@@ -27,6 +31,17 @@ void StartCPU()
 
 void StartGPU()
 {
+
+	myScene->cameras[0]->lookDirections[0] = Point(1, 2, 3);
+
+	CopyToDevice(myScene);
+	cudaCheckError();
+
+	SequentialTrace << <1, 1 >> > ();
+	cudaCheckError();
+
+	CopyFromDevice(myScene);
+	cudaCheckError();
 }
 
 void WriteOutput()
@@ -36,7 +51,7 @@ void WriteOutput()
 
 	for (Camera *item : myScene->cameras)
 	{
-		bs.CreateObject(item->lookDirections, "Camera");
+		bs.CreateObject(item->lookDirections, "Camera", item->lookNum);
 	}
 	WriteLog(std::string("Finished writing belnder scripts to: ") + OUTPUT_NAME, true, Log::Debug);
 }

@@ -13,7 +13,7 @@
 class Point
 {
 public:
-	Point();
+	CUDA_CALLABLE_MEMBER Point();
 	CUDA_CALLABLE_MEMBER Point(float x, float y, float z);
 	CUDA_CALLABLE_MEMBER ~Point();
 
@@ -30,8 +30,7 @@ public:
 	CUDA_CALLABLE_MEMBER void Normalize();
 	CUDA_CALLABLE_MEMBER float Length();
 	std::string ToFile();
-
-
+	
 	CUDA_CALLABLE_MEMBER static Point GetMidlePoint(const Point &p1, const Point &p2);
 	CUDA_CALLABLE_MEMBER static float DotProduct(const Point &p1, const Point &p2);
 	CUDA_CALLABLE_MEMBER static Point CrossProduct(const Point &p1, const Point &p2);

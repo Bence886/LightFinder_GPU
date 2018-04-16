@@ -15,14 +15,14 @@ BlenderScriptCreator::~BlenderScriptCreator()
 	}
 }
 
-void BlenderScriptCreator::CreateObject(std::vector<Point> points, std::string objName)
+void BlenderScriptCreator::CreateObject(Point *points, std::string objName, int pointsNum)
 {
 	if (ofs.is_open())
 	{
 		ofs << "\nverts = [\n";
-		for (Point item : points)
+		for (int i = 0; i < pointsNum; i++)
 		{
-			ofs << item.ToFile();
+			ofs << points[i].ToFile();
 			ofs << ",\n";
 		}
 		ofs << "]\n";

@@ -12,7 +12,7 @@ public:
 	BlenderScriptCreator(std::string filename);
 	~BlenderScriptCreator();
 
-	void CreateObject(std::vector<Point> points, std::string objName);
+	void CreateObject(Point *points, std::string objName, int pointNum);
 
 private:
 	std::string def = 

@@ -26,7 +26,7 @@ bool LightSource::IntersectLight(Vector ray)
 	return true;
 }
 
-LightSource &LightSource::ClosestLightHit(std::vector<LightSource> lights, Vector ray)
+LightSource *LightSource::ClosestLightHit(std::vector<LightSource> lights, Vector ray)
 {
 	LightSource *closest = NULL;
 	for(LightSource item : lights)
@@ -38,7 +38,7 @@ LightSource &LightSource::ClosestLightHit(std::vector<LightSource> lights, Vecto
 	}
 	if (closest)
 	{
-		throw MyException("No light hit");
+		return NULL;
 	}
-	return *closest;
+	return closest;
 }

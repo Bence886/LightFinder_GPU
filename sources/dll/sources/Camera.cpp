@@ -12,7 +12,6 @@ Camera::Camera(const Point & o)
 {
 	origin = o;
 	maxDept = 5;
-	sampling = 100;
 }
 
 Camera::~Camera()
@@ -22,13 +21,12 @@ Camera::~Camera()
 bool Camera::operator==(const Camera & otherCamera) const
 {
 	return this->origin == otherCamera.origin &&
-		this->maxDept == otherCamera.maxDept &&
-		this->sampling == otherCamera.sampling;
+		this->maxDept == otherCamera.maxDept;
 }
 
 void Camera::StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangle*> triangles)
 {
-	for (int i = 0; i < sampling; i++)
+	for (int i = 0; i < SAMPLING; i++)
 	{
 		Point ray = Triangle::GetPointOnSphere(origin);
 		Vector vector(origin, ray);
@@ -37,9 +35,9 @@ void Camera::StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangl
 		ray.MultiplyByLambda(a);
 		if (a != 0)
 		{
-			lookDirections.push_back(ray);
+			lookDirections[lookNum++] = ray;
 
-		}		
+		}
 		WriteLog(std::string("Look direction found: ") + ray.ToFile(), true, Log::Trace);
 	}
 }
@@ -77,12 +75,12 @@ float Camera::CpuTrace(const std::vector<LightSource*>& lights, const std::vecto
 			}
 			return directHitLights[max]->intensity;
 		}
-		try
-		{
-			std::pair<Triangle, Point> trianglePointPair = Triangle::ClosestTriangleHit(triangles, *startPoint);
+		std::pair<Triangle*, Point*> *trianglePointPair = Triangle::ClosestTriangleHit(triangles, *startPoint);
 
-			Triangle triangleHit = trianglePointPair.first;
-			Point pointHit = trianglePointPair.second;
+		if (trianglePointPair->first && trianglePointPair->second)
+		{
+			Triangle triangleHit = *trianglePointPair->first;
+			Point pointHit = *trianglePointPair->second;
 			Point offset(startPoint->Direction);
 			offset.MultiplyByLambda(-1);
 			offset.MultiplyByLambda(0.001f);
@@ -92,63 +90,24 @@ float Camera::CpuTrace(const std::vector<LightSource*>& lights, const std::vecto
 
 			startPoint = &Vector(pointHit, Triangle::GetPointOnHalfSphere(triangleHit, backfacing));
 		}
-		catch (MyException)
-		{
-			return 0;
-		}
+		return 0;
 	}
 	return 0;
 }
 
-float Camera::GPUTrace()
-{
-	return 0.0f;
-}
-
 bool Camera::LightHitBeforeTriangle(const LightSource & light, const std::vector<Triangle*> triangles, const Vector & ray)
 {
-	try
-	{
-		std::pair<Triangle, Point> TrianglePointPair = Triangle::ClosestTriangleHit(triangles, ray);
+	std::pair<Triangle*, Point*> *TrianglePointPair = Triangle::ClosestTriangleHit(triangles, ray);
 
-		Point pointHit = TrianglePointPair.second;
-		if (Point::Distance(light.location ,ray.Location) < Point::Distance(pointHit, ray.Location))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-	catch (MyException)
+	Point pointHit = *(*TrianglePointPair).second;
+	if (Point::Distance(light.location, ray.Location) < Point::Distance(pointHit, ray.Location))
 	{
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 	return true;
 }
 
-std::pair<Triangle, Point> &Triangle::ClosestTriangleHit(std::vector<Triangle*> triangles, Vector ray)
-{
-	Point *closest = NULL;
-	Triangle *hitTriangle = NULL;
-	for (Triangle *item : triangles)
-	{
-		try
-		{
-			Point hit = item->InsideTriangle(ray);
-			if (!closest || (Point::Distance(ray.Location, hit) < Point::Distance(ray.Location, *closest)))
-			{
-				hitTriangle = item;
-				closest = &hit;
-			}
-		}
-		catch (MyException)
-		{
-		}
-	}
-	if (!hitTriangle)
-	{
-		throw MyException("No triangle hit!");
-	}
-	return std::make_pair(*hitTriangle, *closest);
-}

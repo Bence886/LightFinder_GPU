@@ -11,10 +11,10 @@ TEST(BlenderScriptCreator, CREATE_FILE){
 TEST(BlenderScriptCreator, CREATE_OBJECT) {
 	BlenderScriptCreator bsc("TestFile.txt");
 
-	std::vector<Point> points;
-	points.push_back(Point(0, 0, 0));
-	points.push_back(Point(1, 1, 1));
-	points.push_back(Point(2, 2, 2));
+	Point points[3];
+	points[0] = (Point(1, 1, 1));
+	points[1] = (Point(2, 2, 2));
+	points[2] = (Point(0, 0, 0));
 
-	bsc.CreateObject(points, "Teszt object");
+	bsc.CreateObject(points, "Teszt object", 3);
 }

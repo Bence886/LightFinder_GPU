@@ -26,6 +26,6 @@ public:
 
 	CUDA_CALLABLE_MEMBER bool IntersectLight(Vector ray);
 	
-	CUDA_CALLABLE_MEMBER static LightSource &ClosestLightHit(std::vector<LightSource> lights, Vector ray);
+	CUDA_CALLABLE_MEMBER static LightSource *ClosestLightHit(std::vector<LightSource> lights, Vector ray);
 };
 

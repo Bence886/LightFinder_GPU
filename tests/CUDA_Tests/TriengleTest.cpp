@@ -64,7 +64,7 @@ TEST(Triangle, InsideTriangle) {
 	Vector V(p3, p4);
 	Point R(5, -5, 3);
 
-	Point H = T.InsideTriangle(V);
+	Point H = *T.InsideTriangle(V);
 
 	ASSERT_EQ(R, H);
 }

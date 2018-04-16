@@ -29,9 +29,9 @@ public:
 
 	CUDA_CALLABLE_MEMBER bool operator==(const Triangle &otherTriangle) const;
 
-	CUDA_CALLABLE_MEMBER Point InsideTriangle(Vector ray);
+	CUDA_CALLABLE_MEMBER Point *InsideTriangle(Vector ray);
 
-	CUDA_CALLABLE_MEMBER static std::pair<Triangle, Point> &ClosestTriangleHit(std::vector<Triangle*> triangles, Vector ray);
+	CUDA_CALLABLE_MEMBER static std::pair<Triangle*, Point*> *ClosestTriangleHit(std::vector<Triangle*> triangles, Vector ray);
 
 	CUDA_CALLABLE_MEMBER static Point GetPointOnSphere(const Point &origin);
 	CUDA_CALLABLE_MEMBER static Point GetPointOnHalfSphere(Triangle triangle, bool backfacing);

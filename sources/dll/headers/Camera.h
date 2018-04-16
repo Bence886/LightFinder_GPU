@@ -1,6 +1,6 @@
 #pragma once
 
-#include "vector"
+#include "thrust\device_vector.h"
 
 #include "Point.h"
 #include "LightSource.h"
@@ -15,15 +15,17 @@
 #define CUDA_CALLABLE_MEMBER
 #endif 
 
+#define SAMPLING 100
+
 class Camera
 {
 public:
 	CUDA_CALLABLE_MEMBER Camera(const Point &o);
 	CUDA_CALLABLE_MEMBER ~Camera();
 
-	int sampling;
+	int lookNum = 0;
 	Point origin;
-	std::vector<Point> lookDirections;
+	Point lookDirections[SAMPLING];
 	int maxDept;
 
 	CUDA_CALLABLE_MEMBER bool operator==(const Camera &otherCamera)const;
@@ -32,7 +34,6 @@ public:
 	CUDA_CALLABLE_MEMBER void StartGPUTrace();
 private:
 	float CpuTrace(const std::vector<LightSource*> &lights,const std::vector<Triangle*> triangles, Vector *ray, int dept);
-	CUDA_CALLABLE_MEMBER float GPUTrace();
 	CUDA_CALLABLE_MEMBER bool LightHitBeforeTriangle(const LightSource &light, const std::vector<Triangle*> triangles, const Vector &ray);
 };
 
