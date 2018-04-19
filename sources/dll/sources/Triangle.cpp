@@ -119,7 +119,7 @@ std::pair<Triangle*, Point*> *Triangle::ClosestTriangleHit(std::vector<Triangle*
 	for (Triangle *item : triangles)
 	{
 		Point *hit = item->InsideTriangle(ray);
-		if (!closest  || hit && (Point::Distance(ray.Location, *hit) < Point::Distance(ray.Location, *closest)))
+		if (!closest  || (hit && (Point::Distance(ray.Location, *hit) < Point::Distance(ray.Location, *closest))))
 		{
 			hitTriangle = item;
 			closest = hit;

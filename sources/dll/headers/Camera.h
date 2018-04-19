@@ -28,10 +28,12 @@ public:
 	Point lookDirections[SAMPLING];
 	int maxDept;
 
+	static cudaError CopyToSymbol(Camera *cam, Camera *d_cam);
+	static cudaError CopyFromSymbol(Camera *d_cam, Camera *cam);
+
 	CUDA_CALLABLE_MEMBER bool operator==(const Camera &otherCamera)const;
 
 	CUDA_CALLABLE_MEMBER void StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangle*> triangles);
-	CUDA_CALLABLE_MEMBER void StartGPUTrace();
 private:
 	float CpuTrace(const std::vector<LightSource*> &lights,const std::vector<Triangle*> triangles, Vector *ray, int dept);
 	CUDA_CALLABLE_MEMBER bool LightHitBeforeTriangle(const LightSource &light, const std::vector<Triangle*> triangles, const Vector &ray);
