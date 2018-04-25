@@ -31,13 +31,13 @@ void StartCPU()
 
 void StartGPU()
 {
-
 	myScene->cameras[0]->lookDirections[0] = Point(1, 2, 3);
+	myScene->cameras[0]->lookNum++;
 
 	CopyToDevice(myScene);
 	cudaCheckError();
 
-	SequentialTrace << <1, 1 >> > ();
+	startSequential();
 	cudaCheckError();
 
 	CopyFromDevice(myScene);

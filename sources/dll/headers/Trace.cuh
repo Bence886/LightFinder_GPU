@@ -4,7 +4,9 @@
 
 cudaError CopyToDevice(Scene *s);
 
-__global__ void SequentialTrace();
+void startSequential();
+
+__global__ void SequentialTrace(Triangle **dev_triangles);
 
 __global__ void ParallelTrace();
 

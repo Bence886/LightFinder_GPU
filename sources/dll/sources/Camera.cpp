@@ -7,6 +7,9 @@
 
 #include "MyException.h"
 #include "Log.h"
+#include "..\headers\Camera.h"
+
+Camera::Camera() {}
 
 Camera::Camera(const Point & o)
 {

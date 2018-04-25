@@ -7,31 +7,39 @@
 #include "LightSource.h"
 #include "Triangle.h"
 
-__device__ Camera *d_cameras;
-__device__ LightSource *d_lights;
-__device__ Triangle *d_triangles;
+Camera **dev_cameras;
+Triangle **dev_triangles;
+LightSource **dev_lights;
 
 cudaError CopyToDevice(Scene * s)
 {
-	cudaError e = cudaMemcpyToSymbol(d_cameras, s->cameras[0], s->cameras.size());
-	if (e != cudaError::cudaSuccess)
+	cudaError e = cudaSuccess;
+	dev_triangles = new Triangle*[s->triangles.size()];
+	for (int i = 0; i < s->triangles.size(); i++)
 	{
-		return e;
+		e = cudaMalloc((void**)&dev_triangles[i], sizeof(Triangle));
+		if (e != cudaSuccess)
+		{
+			return e;
+		}
+		e = cudaMemcpy(dev_triangles[i], s->triangles[i], sizeof(Triangle), cudaMemcpyHostToDevice);
+		if (e != cudaSuccess)
+		{
+			return e;
+		}
 	}
-	e = cudaMemcpyToSymbol(d_lights, s->lights[0], s->lights.size());
-	if (e != cudaError::cudaSuccess)
-	{
-		return e;
-	}
-	e = cudaMemcpyToSymbol(d_triangles, s->triangles[0], s->triangles.size());
 
 	return e;
 }
 
-__global__ void SequentialTrace()
+void startSequential()
 {
-	
-	//d_cameras->lookDirections[1] = d_cameras->lookDirections[0];
+	SequentialTrace << <1, 1 >> > (dev_triangles);
+}
+
+__global__ void SequentialTrace(Triangle **dev_triangles)
+{
+	printf("%d", dev_triangles[0]->p0);
 }
 
 __global__ void ParallelTrace()
@@ -41,8 +49,7 @@ __global__ void ParallelTrace()
 
 cudaError CopyFromDevice(Scene * s)
 {
-	cudaError e = cudaMemcpyFromSymbol(s->cameras[0], d_cameras, s->triangles.size());
+	cudaError e = cudaSuccess;
 
 	return e;
 }
-

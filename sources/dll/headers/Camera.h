@@ -21,11 +21,12 @@ class Camera
 {
 public:
 	CUDA_CALLABLE_MEMBER Camera(const Point &o);
+	Camera();
 	CUDA_CALLABLE_MEMBER ~Camera();
 
 	int lookNum = 0;
 	Point origin;
-	Point lookDirections[SAMPLING];
+	Point *lookDirections = new Point[SAMPLING];
 	int maxDept;
 
 	CUDA_CALLABLE_MEMBER bool operator==(const Camera &otherCamera)const;
@@ -36,4 +37,3 @@ private:
 	float CpuTrace(const std::vector<LightSource*> &lights,const std::vector<Triangle*> triangles, Vector *ray, int dept);
 	CUDA_CALLABLE_MEMBER bool LightHitBeforeTriangle(const LightSource &light, const std::vector<Triangle*> triangles, const Vector &ray);
 };
-
