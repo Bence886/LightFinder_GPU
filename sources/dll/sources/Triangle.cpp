@@ -67,8 +67,8 @@ void Triangle::CalcNormal()
 	Point u = (p1 - p0);
 	Point v = (p2 - p0);
 
-	normal = &Point::CrossProduct(u, v);
-	normal->Normalize();
+	normal = Point::CrossProduct(u, v);
+	normal.Normalize();
 }
 
 float Triangle::RandomNumber(float Min, float Max)
@@ -89,7 +89,7 @@ Point Triangle::GetPointOnSphere(const Point & origin)
 
 Point Triangle::GetPointOnHalfSphere(Triangle hitTriangle, bool backfacing)
 {
-	Point normal = *hitTriangle.normal;
+	Point normal = hitTriangle.normal;
 	if (backfacing)
 	{
 		normal.MultiplyByLambda(-1);

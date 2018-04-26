@@ -18,8 +18,8 @@ int main()
 
 	ProcessInput();
 	
-	StartCPU();
-	//StartGPU();
+	//StartCPU();
+	StartGPU();
 
 	WriteOutput();
 

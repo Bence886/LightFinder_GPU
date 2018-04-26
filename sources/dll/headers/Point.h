@@ -13,7 +13,7 @@
 class Point
 {
 public:
-	CUDA_CALLABLE_MEMBER Point();
+	CUDA_CALLABLE_MEMBER Point(); 
 	CUDA_CALLABLE_MEMBER Point(float x, float y, float z);
 	CUDA_CALLABLE_MEMBER ~Point();
 

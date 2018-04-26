@@ -37,7 +37,7 @@ void StartGPU()
 	CopyToDevice(myScene);
 	cudaCheckError();
 
-	SequentialTrace << <1, 1 >> > ();
+	StartSequential();
 	cudaCheckError();
 
 	CopyFromDevice(myScene);

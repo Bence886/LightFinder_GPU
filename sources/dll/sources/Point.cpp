@@ -11,6 +11,7 @@ Point::Point(float x, float y, float z) : X(x), Y(y), Z(z)
 {
 }
 
+
 Point::~Point()
 {
 }
@@ -26,7 +27,7 @@ Point & Point::operator+(const Point &otherPoint) const
 }
 
 
-bool Point::operator==(const Point &otherPoint) const 
+bool Point::operator==(const Point &otherPoint) const
 {
 	return (X == otherPoint.X && Y == otherPoint.Y && Z == otherPoint.Z);
 }

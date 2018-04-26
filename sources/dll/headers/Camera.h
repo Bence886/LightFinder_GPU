@@ -23,7 +23,7 @@ public:
 	CUDA_CALLABLE_MEMBER Camera(const Point &o);
 	CUDA_CALLABLE_MEMBER ~Camera();
 
-	int lookNum = 0;
+	int lookNum = SAMPLING;
 	Point origin;
 	Point lookDirections[SAMPLING];
 	int maxDept;

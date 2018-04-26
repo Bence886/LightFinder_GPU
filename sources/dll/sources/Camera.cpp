@@ -118,7 +118,7 @@ float Camera::CpuTrace(const std::vector<LightSource*>& lights, const std::vecto
 			offset.MultiplyByLambda(0.001f);
 			pointHit = pointHit + offset;
 
-			bool backfacing = Point::DotProduct(*triangleHit.normal, startPoint->Direction) > 0;
+			bool backfacing = Point::DotProduct(triangleHit.normal, startPoint->Direction) > 0;
 
 			startPoint = &Vector(pointHit, Triangle::GetPointOnHalfSphere(triangleHit, backfacing));
 		}

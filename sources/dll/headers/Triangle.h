@@ -25,7 +25,7 @@ public:
 	Point p1;
 	Point p2;
 
-	Point *normal;
+	Point normal;
 
 	CUDA_CALLABLE_MEMBER bool operator==(const Triangle &otherTriangle) const;
 

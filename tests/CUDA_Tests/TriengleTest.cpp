@@ -28,7 +28,7 @@ TEST(Triangle, NORMAL_0) {
 	Point V(0, 0, 1);
 
 	//act
-	Point N = *T.normal;
+	Point N = T.normal;
 
 	//assert
 	ASSERT_EQ(V.X, N.X);
@@ -45,7 +45,7 @@ TEST(Triangle, NORMAL_1) {
 	Point V(0, 1, 0);
 
 	//act
-	Point N = *T.normal;
+	Point N = T.normal;
 
 	//assert
 	ASSERT_EQ(V.X, N.X);
