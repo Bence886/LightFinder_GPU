@@ -11,51 +11,15 @@
 Camera::Camera(const Point & o)
 {
 	origin = o;
-	maxDept = 5;
 }
 
 Camera::~Camera()
 {
 }
 
-cudaError Camera::CopyToSymbol(Camera * cam, Camera * d_cam)
-{
-	cudaError e;
-
-	e = cudaMalloc(&d_cam, sizeof(Camera));
-	if (e != cudaSuccess)
-	{
-		return e;
-	}
-	e = cudaMemcpy(d_cam, cam, sizeof(Camera), cudaMemcpyHostToDevice);
-	if (e != cudaSuccess)
-	{
-		return e;
-	}
-	Point *d_point;
-	e = cudaMalloc(&d_point, sizeof(Point) * SAMPLING);
-	if (e != cudaSuccess)
-	{
-		return e;
-	}
-	e = cudaMemcpy(d_point, cam->lookDirections, sizeof(Point) * SAMPLING, cudaMemcpyHostToDevice);
-	if (e != cudaSuccess)
-	{
-		return e;
-	}
-	e = cudaMemcpy(d_cam->lookDirections, d_point, sizeof(Point) * SAMPLING, cudaMemcpyDeviceToDevice);
-	return e;
-}
-
-cudaError Camera::CopyFromSymbol(Camera * d_cam, Camera * cam)
-{
-	return cudaSuccess;
-}
-
 bool Camera::operator==(const Camera & otherCamera) const
 {
-	return this->origin == otherCamera.origin &&
-		this->maxDept == otherCamera.maxDept;
+	return this->origin == otherCamera.origin;
 }
 
 void Camera::StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangle*> triangles)
@@ -65,13 +29,12 @@ void Camera::StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangl
 		Point ray = Triangle::GetPointOnSphere(origin);
 		Vector vector(origin, ray);
 		WriteLog(std::string("New ray started to: ") + vector.Direction.ToFile() + " from origin, on camera: " + origin.ToFile(), true, Log::Debug);
-		float a = CpuTrace(lights, triangles, &vector, maxDept);
+		float a = CpuTrace(lights, triangles, &vector, MAX_DEPT);
 		ray = vector.Direction;
 		ray.MultiplyByLambda(a);
 		if (a != 0)
 		{
 			lookDirections[lookNum++] = ray;
-
 		}
 		WriteLog(std::string("Look direction found: ") + ray.ToFile(), true, Log::Trace);
 	}
@@ -87,7 +50,7 @@ float Camera::CpuTrace(const std::vector<LightSource*>& lights, const std::vecto
 		{
 			rayToPoint = item->location - startPoint->Location;
 			rayToPoint.Normalize();
-			if (LightHitBeforeTriangle(*item, triangles, Vector(startPoint->Location, rayToPoint)))
+			if (Camera::LightHitBeforeTriangle(*item, triangles, Vector(startPoint->Location, rayToPoint)))
 			{
 				directHitLights.push_back(item);
 			}

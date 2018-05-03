@@ -16,6 +16,7 @@
 #endif 
 
 #define SAMPLING 100
+#define MAX_DEPT 5
 
 class Camera
 {
@@ -23,19 +24,15 @@ public:
 	CUDA_CALLABLE_MEMBER Camera(const Point &o);
 	CUDA_CALLABLE_MEMBER ~Camera();
 
-	int lookNum = SAMPLING;
+	int lookNum = 0;
 	Point origin;
 	Point lookDirections[SAMPLING];
-	int maxDept;
-
-	static cudaError CopyToSymbol(Camera *cam, Camera *d_cam);
-	static cudaError CopyFromSymbol(Camera *d_cam, Camera *cam);
 
 	CUDA_CALLABLE_MEMBER bool operator==(const Camera &otherCamera)const;
 
 	CUDA_CALLABLE_MEMBER void StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangle*> triangles);
 private:
 	float CpuTrace(const std::vector<LightSource*> &lights,const std::vector<Triangle*> triangles, Vector *ray, int dept);
-	CUDA_CALLABLE_MEMBER bool LightHitBeforeTriangle(const LightSource &light, const std::vector<Triangle*> triangles, const Vector &ray);
+	CUDA_CALLABLE_MEMBER static bool LightHitBeforeTriangle(const LightSource &light, const std::vector<Triangle*> triangles, const Vector &ray);
 };
 

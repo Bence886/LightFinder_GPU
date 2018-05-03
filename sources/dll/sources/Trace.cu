@@ -3,10 +3,10 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
-#include "Camera.h"
-#include "LightSource.h"
-#include "Triangle.h"
-#include "Point.h"
+	#include "Camera.h"
+	#include "LightSource.h"
+	#include "Triangle.h"
+	#include "Point.h"
 
 Camera *dev_cameras;
 LightSource *dev_lights;
@@ -64,17 +64,31 @@ void StartSequential()
 	SequentialTrace << <1, 1 >> > (dev_triangles, dev_lights, dev_cameras);
 }
 
-void startParallel()
+void startParallel(int block, int thread) //cameras / sampling
 {
+	ParallelTrace << <block, thread >> > (dev_triangles, dev_lights, dev_cameras);
 }
 
 __global__ void SequentialTrace(Triangle *dev_triangles, LightSource *dev_lights, Camera *dev_cameras)
 {
-	dev_cameras->lookDirections[0] = Point(6, 87, 79);
-	printf("%f\n", dev_cameras->lookDirections[0].X);
+	for (int j = 0; j < 1 ; j++)
+	{
+		for (int i = 0; i < SAMPLING; i++)
+		{
+			Point ray = Triangle::GetPointOnSphere(dev_cameras[j].origin);
+			Vector vector(dev_cameras[j].origin, ray);
+			float a ;//= CpuTrace(dev_lights, dev_triangles, &vector, MAX_DEPT);
+			ray = vector.Direction;
+			ray.MultiplyByLambda(a);
+			if (a != 0)
+			{
+				dev_cameras[j].lookDirections[dev_cameras[j].lookNum++] = ray;
+			}
+		}
+	}
 }
 
-__global__ void ParallelTrace()
+__global__ void ParallelTrace(Triangle *dev_triangles, LightSource *dev_lights, Camera *dev_cameras)
 {
 
 }
