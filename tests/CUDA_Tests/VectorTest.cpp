@@ -2,7 +2,6 @@
 #include "gmock\gmock.h"
 
 #include "Vector.h"
-#include "MyException.h"
 
 TEST(Vector, CREATE){
 	Vector v(Point(1, 2, 3), Point(0, 0, 1));
@@ -13,10 +12,6 @@ TEST(Vector, CREATE){
 	ASSERT_EQ(p1, v.Location);
 	ASSERT_EQ(p2, v.Direction);
 	ASSERT_EQ(1, v.Length);
-}
-
-TEST(Vector, CTOR_THROWS_EXCEPTION) {
-	ASSERT_THROW(Vector v(Point(1, 2, 3), Point(0, 1, 1)); , MyException);
 }
 
 TEST(Vector, GET_END_POINT) {

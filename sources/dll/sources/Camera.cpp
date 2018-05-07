@@ -5,7 +5,6 @@
 
 #include <tuple>
 
-#include "MyException.h"
 #include "Log.h"
 
 Camera::Camera(const Point & o)

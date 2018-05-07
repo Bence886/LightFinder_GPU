@@ -1,6 +1,5 @@
 #include "Triangle.h"
 
-#include "MyException.h"
 #include "Log.h"
 
 Triangle::Triangle(Point p0, Point p1, Point p2)
@@ -71,10 +70,29 @@ void Triangle::CalcNormal()
 	normal.Normalize();
 }
 
+#ifdef __CUDACC__
+__device__ curandState state;
+float Triangle::RandomNumber(float Min, float Max)
+{
+	printf("Gimme random: ");
+	float asd = curand_uniform(&state);
+	printf("Generated random number: %f\n", asd);
+	return asd;
+}
+void Triangle::InitCuRand()
+{
+	printf("Init Curand\n");
+	int id = threadIdx.x + blockIdx.x;
+	curand_init(1234, id, 0, &state);
+	printf("finished Init Curand\n");
+
+}
+#else
 float Triangle::RandomNumber(float Min, float Max)
 {
 	return ((float(rand()) / float(RAND_MAX)) * (Max - Min)) + Min;
 }
+#endif
 
 Point Triangle::GetPointOnSphere(const Point & origin)
 {
@@ -119,7 +137,7 @@ std::pair<Triangle*, Point*> *Triangle::ClosestTriangleHit(std::vector<Triangle*
 	for (Triangle *item : triangles)
 	{
 		Point *hit = item->InsideTriangle(ray);
-		if (!closest  || (hit && (Point::Distance(ray.Location, *hit) < Point::Distance(ray.Location, *closest))))
+		if (!closest || (hit && (Point::Distance(ray.Location, *hit) < Point::Distance(ray.Location, *closest))))
 		{
 			hitTriangle = item;
 			closest = hit;

@@ -1,6 +1,5 @@
 #include "Vector.h"
 #include "Log.h"
-#include "MyException.h"
 
 Vector::Vector(Point location, Point direction) : Length(1), Location(location)
 {
@@ -10,7 +9,7 @@ Vector::Vector(Point location, Point direction) : Length(1), Location(location)
 	}
 	else
 	{
-		WriteLog("Direction vector is not a Unit vector!",true, Log::Error);
+		WriteLog("Direction vector is not a Unit vector!",true, Log::Exception);
 	}
 	Direction = direction;
 }
