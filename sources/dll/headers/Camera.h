@@ -9,31 +9,37 @@
 
 #include "cuda_runtime.h"
 
-#ifdef __CUDACC__
-#define CUDA_CALLABLE_MEMBER __host__ __device__
-#else
-#define CUDA_CALLABLE_MEMBER
-#endif 
-
 #define SAMPLING 100
+#define MAX_DEPT 5
 
 class Camera
 {
 public:
 	CUDA_CALLABLE_MEMBER Camera(const Point &o);
-	Camera();
+	CUDA_CALLABLE_MEMBER Camera();
 	CUDA_CALLABLE_MEMBER ~Camera();
 
 	int lookNum = 0;
 	Point origin;
-	Point *lookDirections = new Point[SAMPLING];
-	int maxDept;
+	Point lookDirections[SAMPLING];
 
 	CUDA_CALLABLE_MEMBER bool operator==(const Camera &otherCamera)const;
 
-	CUDA_CALLABLE_MEMBER void StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangle*> triangles);
-	CUDA_CALLABLE_MEMBER void StartGPUTrace();
+#ifdef __CUDACC__
+	__device__ void StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangle*> triangles);
+#else
+	void StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangle*> triangles);
+#endif
+
+	CUDA_CALLABLE_MEMBER static bool LightHitBeforeTriangle(LightSource &light, Triangle *triangles, const Vector &ray, int triangles_len);
+
 private:
-	float CpuTrace(const std::vector<LightSource*> &lights,const std::vector<Triangle*> triangles, Vector *ray, int dept);
-	CUDA_CALLABLE_MEMBER bool LightHitBeforeTriangle(const LightSource &light, const std::vector<Triangle*> triangles, const Vector &ray);
+#ifdef __CUDACC__
+	__device__ float CpuTrace(const std::vector<LightSource*> &lights, const std::vector<Triangle*> triangles, Vector *ray, int dept);
+#else
+	float CpuTrace(const std::vector<LightSource*> &lights, const std::vector<Triangle*> triangles, Vector *ray, int dept);
+#endif
+
+
 };
+

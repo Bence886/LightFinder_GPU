@@ -9,6 +9,7 @@
 Scene::Scene(std::string filename)
 {
 	ReadInputFile(filename);
+	CreateFloor(-1);
 }
 
 Scene::~Scene()
@@ -17,8 +18,6 @@ Scene::~Scene()
 
 void Scene::StartTrace_CPU()
 {
-	CreateFloor(-1);
-
 	WriteLog("CPU trace started: ", true, Log::Message);
 	WriteLog(std::string("Sampling: ") + std::to_string(SAMPLING), true, Log::Debug);
 

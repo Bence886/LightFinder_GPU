@@ -12,7 +12,7 @@
 #define OUTPUT_NAME "Blender.txt"
 #define INPUT_NAME "In.xml"
 
-#define cudaCheckError() {cudaError_t e = cudaGetLastError();WriteLog(std::string("CUDA result:") + cudaGetErrorString(e), true, Log::Message);}
+#define cudaCheckError() {cudaError_t e = cudaGetLastError(); WriteLog(std::string("CUDA result:") + cudaGetErrorString(e), true, Log::Exception);}
 
 Scene *myScene;
 
@@ -31,15 +31,17 @@ void StartCPU()
 
 void StartGPU()
 {
-	myScene->cameras[0]->lookDirections[0] = Point(1, 2, 3);
-	myScene->cameras[0]->lookNum++;
 
+	myScene->cameras[0]->lookDirections[0] = Point(1, 2, 3);
+
+	WriteLog("Started copy to GPU", true, Log::Trace);
 	CopyToDevice(myScene);
 	cudaCheckError();
 
-	startSequential();
+	StartSequential();
 	cudaCheckError();
 
+	WriteLog("Started copy from GPU", true, Log::Trace);
 	CopyFromDevice(myScene);
 	cudaCheckError();
 }

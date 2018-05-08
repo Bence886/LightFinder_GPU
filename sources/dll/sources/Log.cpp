@@ -1,10 +1,9 @@
 #include "Log.h"
 
-#include <iostream>
 
 bool Log::DoLog = true;
-Log::LogLevel Log::currentLogLevel = Log::Trace;
-std::ofstream Log::ofs;
+Log::LogLevel Log::currentLogLevel = Log::Exception;
+//FILE *f;
 
 void Log::WriteLogFunction(std::string msg, bool console, LogLevel level)
 {
@@ -12,24 +11,24 @@ void Log::WriteLogFunction(std::string msg, bool console, LogLevel level)
 	{
 		if (console && level >= currentLogLevel)
 		{
-			std::cout << level << " : " << msg << std::endl;
+			printf("%d : %s\n", level, msg.c_str());
 		}
-		if (ofs.is_open())
+		//if (f)
 		{
-			ofs << level << " : " << msg << std::endl;
+			//fprintf(f, "%d : %s\n", (int)level, msg);
 		}
 	}
 }
 
 void Log::InitLog()
 {
-	ofs.open("Log.txt");
+	//f = fopen("Log.txt", "w");
 }
 
 void Log::CloseLog()
 {
-	if (ofs.is_open())
+	//if (f)
 	{
-		ofs.close();
+		//fclose(f);
 	}
 }

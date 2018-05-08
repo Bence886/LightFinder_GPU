@@ -5,16 +5,13 @@
 
 #include <tuple>
 
-#include "MyException.h"
 #include "Log.h"
 #include "..\headers\Camera.h"
 
-Camera::Camera() {}
-
+Camera::Camera(){}
 Camera::Camera(const Point & o)
 {
 	origin = o;
-	maxDept = 5;
 }
 
 Camera::~Camera()
@@ -23,10 +20,8 @@ Camera::~Camera()
 
 bool Camera::operator==(const Camera & otherCamera) const
 {
-	return this->origin == otherCamera.origin &&
-		this->maxDept == otherCamera.maxDept;
+	return this->origin == otherCamera.origin;
 }
-
 void Camera::StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangle*> triangles)
 {
 	for (int i = 0; i < SAMPLING; i++)
@@ -34,19 +29,15 @@ void Camera::StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangl
 		Point ray = Triangle::GetPointOnSphere(origin);
 		Vector vector(origin, ray);
 		WriteLog(std::string("New ray started to: ") + vector.Direction.ToFile() + " from origin, on camera: " + origin.ToFile(), true, Log::Debug);
-		float a = CpuTrace(lights, triangles, &vector, maxDept);
+		float a = CpuTrace(lights, triangles, &vector, MAX_DEPT);
+		ray = vector.Direction;
 		ray.MultiplyByLambda(a);
 		if (a != 0)
 		{
 			lookDirections[lookNum++] = ray;
-
 		}
 		WriteLog(std::string("Look direction found: ") + ray.ToFile(), true, Log::Trace);
 	}
-}
-
-void Camera::StartGPUTrace()
-{
 }
 
 float Camera::CpuTrace(const std::vector<LightSource*>& lights, const std::vector<Triangle*> triangles, Vector * startPoint, int dept)
@@ -59,7 +50,7 @@ float Camera::CpuTrace(const std::vector<LightSource*>& lights, const std::vecto
 		{
 			rayToPoint = item->location - startPoint->Location;
 			rayToPoint.Normalize();
-			if (LightHitBeforeTriangle(*item, triangles, Vector(startPoint->Location, rayToPoint)))
+			if (Camera::LightHitBeforeTriangle(*item, triangles[0], Vector(startPoint->Location, rayToPoint), triangles.size()))
 			{
 				directHitLights.push_back(item);
 			}
@@ -76,9 +67,10 @@ float Camera::CpuTrace(const std::vector<LightSource*>& lights, const std::vecto
 				}
 				idx++;
 			}
+			startPoint->Direction = rayToPoint;
 			return directHitLights[max]->intensity;
 		}
-		std::pair<Triangle*, Point*> *trianglePointPair = Triangle::ClosestTriangleHit(triangles, *startPoint);
+		std::pair<Triangle*, Point*> *trianglePointPair = Triangle::ClosestTriangleHit(triangles[0], *startPoint, triangles.size());
 
 		if (trianglePointPair->first && trianglePointPair->second)
 		{
@@ -89,18 +81,22 @@ float Camera::CpuTrace(const std::vector<LightSource*>& lights, const std::vecto
 			offset.MultiplyByLambda(0.001f);
 			pointHit = pointHit + offset;
 
-			bool backfacing = Point::DotProduct(*triangleHit.normal, startPoint->Direction) > 0;
+			bool backfacing = Point::DotProduct(triangleHit.normal, startPoint->Direction) > 0;
 
 			startPoint = &Vector(pointHit, Triangle::GetPointOnHalfSphere(triangleHit, backfacing));
 		}
-		return 0;
 	}
 	return 0;
 }
 
-bool Camera::LightHitBeforeTriangle(const LightSource & light, const std::vector<Triangle*> triangles, const Vector & ray)
+bool Camera::LightHitBeforeTriangle(LightSource & light, Triangle *triangles, const Vector & ray, int triengles_len)
 {
-	std::pair<Triangle*, Point*> *TrianglePointPair = Triangle::ClosestTriangleHit(triangles, ray);
+	std::pair<Triangle*, Point*> *TrianglePointPair = Triangle::ClosestTriangleHit(triangles, ray, triengles_len);
+
+	if (!TrianglePointPair || !(*TrianglePointPair).second)
+	{
+		return true;
+	}
 
 	Point pointHit = *(*TrianglePointPair).second;
 	if (Point::Distance(light.location, ray.Location) < Point::Distance(pointHit, ray.Location))

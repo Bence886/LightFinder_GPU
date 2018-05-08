@@ -1,7 +1,6 @@
 #include "LightSource.h"
 
 #include "math.h"
-#include "MyException.h"
 
 LightSource::LightSource(Point loc, float intensity) : location(loc), intensity(intensity)
 {

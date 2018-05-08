@@ -1,6 +1,5 @@
 #include "Triangle.h"
 
-#include "MyException.h"
 #include "Log.h"
 
 Triangle::Triangle(Point p0, Point p1, Point p2)
@@ -67,14 +66,32 @@ void Triangle::CalcNormal()
 	Point u = (p1 - p0);
 	Point v = (p2 - p0);
 
-	normal = &Point::CrossProduct(u, v);
-	normal->Normalize();
+	normal = Point::CrossProduct(u, v);
+	normal.Normalize();
 }
 
+#ifdef __CUDACC__
+__device__ curandState state;
+float Triangle::RandomNumber(float Min, float Max)
+{
+	float x = curand_uniform(&state);
+	x = x *2 -1;
+	printf("Generated random number: %f\n", x);
+	return x;
+}
+void Triangle::InitCuRand()
+{
+	printf("Init Curand\n");
+	int id = threadIdx.x + blockIdx.x;
+	curand_init(1234, id, 0, &state);
+	printf("finished Init Curand\n");
+}
+#else
 float Triangle::RandomNumber(float Min, float Max)
 {
 	return ((float(rand()) / float(RAND_MAX)) * (Max - Min)) + Min;
 }
+#endif
 
 Point Triangle::GetPointOnSphere(const Point & origin)
 {
@@ -89,7 +106,7 @@ Point Triangle::GetPointOnSphere(const Point & origin)
 
 Point Triangle::GetPointOnHalfSphere(Triangle hitTriangle, bool backfacing)
 {
-	Point normal = *hitTriangle.normal;
+	Point normal = hitTriangle.normal;
 	if (backfacing)
 	{
 		normal.MultiplyByLambda(-1);
@@ -112,16 +129,16 @@ Point Triangle::GetPointOnHalfSphere(Triangle hitTriangle, bool backfacing)
 	return randomPoint;
 }
 
-std::pair<Triangle*, Point*> *Triangle::ClosestTriangleHit(std::vector<Triangle*> triangles, Vector ray)
+std::pair<Triangle*, Point*> *Triangle::ClosestTriangleHit(Triangle *triangles, Vector ray, int triangles_len)
 {
 	Point *closest = NULL;
 	Triangle *hitTriangle = NULL;
-	for (Triangle *item : triangles)
+	for (int i = 0; i < triangles_len; i++)
 	{
-		Point *hit = item->InsideTriangle(ray);
-		if (!closest  || hit && (Point::Distance(ray.Location, *hit) < Point::Distance(ray.Location, *closest)))
+		Point *hit = triangles[i].InsideTriangle(ray);
+		if (!closest || (hit && (Point::Distance(ray.Location, *hit) < Point::Distance(ray.Location, *closest))))
 		{
-			hitTriangle = item;
+			hitTriangle = &triangles[i];
 			closest = hit;
 		}
 	}

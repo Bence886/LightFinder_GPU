@@ -3,35 +3,36 @@
 #include <sstream>
 #include "math.h"
 
-Point::Point()
+CUDA_CALLABLE_MEMBER Point::Point()
 {
 }
 
-Point::Point(float x, float y, float z) : X(x), Y(y), Z(z)
+CUDA_CALLABLE_MEMBER Point::Point(float x, float y, float z) : X(x), Y(y), Z(z)
 {
 }
 
-Point::~Point()
+
+CUDA_CALLABLE_MEMBER Point::~Point()
 {
 }
 
-Point & Point::operator-(const Point &otherPoint) const
+CUDA_CALLABLE_MEMBER Point & Point::operator-(const Point &otherPoint) const
 {
 	return Point(X - otherPoint.X, Y - otherPoint.Y, Z - otherPoint.Z);
 }
 
-Point & Point::operator+(const Point &otherPoint) const
+CUDA_CALLABLE_MEMBER Point & Point::operator+(const Point &otherPoint) const
 {
 	return Point(X + otherPoint.X, Y + otherPoint.Y, Z + otherPoint.Z);
 }
 
 
-bool Point::operator==(const Point &otherPoint) const 
+CUDA_CALLABLE_MEMBER bool Point::operator==(const Point &otherPoint) const
 {
 	return (X == otherPoint.X && Y == otherPoint.Y && Z == otherPoint.Z);
 }
 
-Point & Point::operator=(const Point &otherPoint)
+CUDA_CALLABLE_MEMBER Point & Point::operator=(const Point &otherPoint)
 {
 	if (this == &otherPoint)
 	{
@@ -43,7 +44,7 @@ Point & Point::operator=(const Point &otherPoint)
 	return *this;
 }
 
-Point & Point::operator+=(const Point & otherPoint)
+CUDA_CALLABLE_MEMBER Point & Point::operator+=(const Point & otherPoint)
 {
 	this->X += otherPoint.X;
 	this->Y += otherPoint.Y;
@@ -52,21 +53,21 @@ Point & Point::operator+=(const Point & otherPoint)
 	return *this;
 }
 
-void Point::MultiplyByLambda(float l)
+CUDA_CALLABLE_MEMBER void Point::MultiplyByLambda(float l)
 {
 	X *= l;
 	Y *= l;
 	Z *= l;
 }
 
-void Point::DevideByLambda(float l)
+CUDA_CALLABLE_MEMBER void Point::DevideByLambda(float l)
 {
 	X /= l;
 	Y /= l;
 	Z /= l;
 }
 
-void Point::Normalize()
+CUDA_CALLABLE_MEMBER void Point::Normalize()
 {
 	float d = sqrt(X * X + Y * Y + Z * Z);
 	if (d != 0)
@@ -75,7 +76,7 @@ void Point::Normalize()
 	}
 }
 
-float Point::Length()
+CUDA_CALLABLE_MEMBER float Point::Length()
 {
 	return Distance(Point(0, 0, 0), *this);
 }
@@ -89,7 +90,7 @@ std::string Point::ToFile()
 	return ss.str();
 }
 
-Point Point::GetMidlePoint(const Point & p1, const Point & p2)
+CUDA_CALLABLE_MEMBER Point Point::GetMidlePoint(const Point & p1, const Point & p2)
 {
 	Point midle;
 	midle = p1 + p2;
@@ -98,7 +99,7 @@ Point Point::GetMidlePoint(const Point & p1, const Point & p2)
 	return midle;
 }
 
-float Point::DotProduct(const Point & p1, const Point & p2)
+CUDA_CALLABLE_MEMBER float Point::DotProduct(const Point & p1, const Point & p2)
 {
 	//http://www.lighthouse3d.com/tutorials/maths/inner-product/
 	return (p1.X * p2.X + p1.Y * p2.Y + p1.Z * p2.Z);
@@ -111,12 +112,12 @@ Point Point::CrossProduct(const Point & p1, const Point & p2)
 	return p;
 }
 
-float Point::Distance(const Point & p1, const Point & p2)
+CUDA_CALLABLE_MEMBER float Point::Distance(const Point & p1, const Point & p2)
 {
 	return sqrt((p1.X - p2.X) * (p1.X - p2.X) + (p1.Y - p2.Y) * (p1.Y - p2.Y) + (p1.Z - p2.Z) * (p1.Z - p2.Z));
 }
 
-bool Point::CompFloat(float f1, float f2, float e)
+CUDA_CALLABLE_MEMBER bool Point::CompFloat(float f1, float f2, float e)
 {
 	return fabs(f1 - f2) < e;
 }

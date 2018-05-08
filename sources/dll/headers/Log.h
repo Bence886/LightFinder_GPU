@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <fstream>
 
 #define LOG_ON
 
@@ -28,5 +27,4 @@ public:
 	static void CloseLog();
 
 private:
-	static std::ofstream ofs;
 };

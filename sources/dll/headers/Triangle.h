@@ -9,11 +9,8 @@
 
 #include "cuda_runtime.h"
 
-#ifdef __CUDACC__
-#define CUDA_CALLABLE_MEMBER __host__ __device__
-#else
-#define CUDA_CALLABLE_MEMBER
-#endif 
+#include "curand.h"
+#include "curand_kernel.h"
 
 class Triangle
 {
@@ -25,19 +22,29 @@ public:
 	Point p1;
 	Point p2;
 
-	Point *normal;
+	Point normal;
 
 	CUDA_CALLABLE_MEMBER bool operator==(const Triangle &otherTriangle) const;
 
 	CUDA_CALLABLE_MEMBER Point *InsideTriangle(Vector ray);
 
-	CUDA_CALLABLE_MEMBER static std::pair<Triangle*, Point*> *ClosestTriangleHit(std::vector<Triangle*> triangles, Vector ray);
+	CUDA_CALLABLE_MEMBER static std::pair<Triangle*, Point*> *ClosestTriangleHit(Triangle *triangles, Vector ray, int triengless_len);
 
-	CUDA_CALLABLE_MEMBER static Point GetPointOnSphere(const Point &origin);
-	CUDA_CALLABLE_MEMBER static Point GetPointOnHalfSphere(Triangle triangle, bool backfacing);
+#ifdef __CUDACC__
+	__device__ static Point GetPointOnSphere(const Point &origin);
+	__device__ static Point GetPointOnHalfSphere(Triangle triangle, bool backfacing);
+#else
+	static Point GetPointOnSphere(const Point &origin);
+	static Point GetPointOnHalfSphere(Triangle triangle, bool backfacing);
+#endif
 
+	__device__ static void InitCuRand();
 
 private:
 	CUDA_CALLABLE_MEMBER void CalcNormal();
-	CUDA_CALLABLE_MEMBER static float RandomNumber(float min, float max);
+#ifdef __CUDACC__
+	__device__ static float RandomNumber(float min, float max);
+#else
+	__host__ static float RandomNumber(float min, float max);
+#endif 
 };
