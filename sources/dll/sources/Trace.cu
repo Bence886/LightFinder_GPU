@@ -68,11 +68,10 @@ cudaError CopyToDevice(Scene * s)
 			return e;
 		}
 	}
-	return e;
-
 	dev_cameras_len = s->cameras.size();
 	dev_triangles_len = s->triangles.size();
 	dev_lights_len = s->lights.size();
+	return e;
 }
 
 void StartSequential()
