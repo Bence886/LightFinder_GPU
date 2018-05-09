@@ -5,7 +5,6 @@
 #include <tuple>
 
 #include "Log.h"
-#include "Camera.h"
 
 Camera::Camera(){}
 Camera::Camera(const Point & o)
@@ -93,7 +92,7 @@ bool Camera::LightHitBeforeTriangle(LightSource & light, Triangle *triangles, co
 {
 	Pair TrianglePointPair = Triangle::ClosestTriangleHit(triangles, ray, triengles_len);
 
-	if (!TrianglePointPair.empty || !TrianglePointPair.second)
+	if (TrianglePointPair.empty || !TrianglePointPair.second)
 	{
 		return true;
 	}

@@ -108,7 +108,6 @@ __global__ void SequentialTrace(Triangle *dev_triangles, LightSource *dev_lights
 			if (a != 0)
 			{
 				dev_cameras[j].lookDirections[dev_cameras[j].lookNum++] = ray;
-				printf("%f\n", dev_cameras[j].lookDirections[i].X);
 			}
 		}
 	}

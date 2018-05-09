@@ -76,7 +76,7 @@ float Triangle::RandomNumber(float Min, float Max)
 {
 	float x = curand_uniform(&state);
 	x = x *2 -1;
-	printf("Generated random number: %f\n", x);
+	//printf("Generated random number: %f\n", x);
 	return x;
 }
 void Triangle::InitCuRand()

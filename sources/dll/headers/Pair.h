@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Triangle.h"
 #include "Point.h"
+class Triangle;
 
 class Pair
 {
 public:
-	Pair();
-	Pair(Triangle * first, Point * second);
-	~Pair();
+	CUDA_CALLABLE_MEMBER Pair();
+	CUDA_CALLABLE_MEMBER Pair(Triangle * first, Point * second);
+	CUDA_CALLABLE_MEMBER ~Pair();
 	Triangle *first;
 	Point *second;
 	bool empty;
