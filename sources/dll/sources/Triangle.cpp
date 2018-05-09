@@ -81,10 +81,9 @@ float Triangle::RandomNumber(float Min, float Max)
 }
 void Triangle::InitCuRand()
 {
-	printf("Init Curand\n");
-	int id = threadIdx.x + blockIdx.x;
+	int id = threadIdx.x + blockIdx.x * 64;
 	curand_init(1234, id, 0, &state);
-	printf("finished Init Curand\n");
+	printf("Init Curand id: %d\n", id);
 }
 #else
 float Triangle::RandomNumber(float Min, float Max)

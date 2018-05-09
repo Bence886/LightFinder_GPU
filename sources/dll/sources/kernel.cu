@@ -35,7 +35,8 @@ void StartGPU()
 	CopyToDevice(myScene);
 	cudaCheckError();
 
-	StartSequential();
+	//StartSequential();
+	startParallel(myScene->cameras.size(), SAMPLING);
 	cudaCheckError();
 
 	WriteLog("Started copy from GPU", true, Log::Trace);
