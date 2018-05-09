@@ -1,12 +1,11 @@
 #include "Camera.h"
 
-#include <vector>
 #include <algorithm>
 
 #include <tuple>
 
 #include "Log.h"
-#include "..\headers\Camera.h"
+#include "Camera.h"
 
 Camera::Camera(){}
 Camera::Camera(const Point & o)
@@ -22,6 +21,7 @@ bool Camera::operator==(const Camera & otherCamera) const
 {
 	return this->origin == otherCamera.origin;
 }
+
 void Camera::StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangle*> triangles)
 {
 	for (int i = 0; i < SAMPLING; i++)
@@ -70,12 +70,12 @@ float Camera::CpuTrace(const std::vector<LightSource*>& lights, const std::vecto
 			startPoint->Direction = rayToPoint;
 			return directHitLights[max]->intensity;
 		}
-		std::pair<Triangle*, Point*> *trianglePointPair = Triangle::ClosestTriangleHit(triangles[0], *startPoint, triangles.size());
+		Pair trianglePointPair = Triangle::ClosestTriangleHit(triangles[0], *startPoint, triangles.size());
 
-		if (trianglePointPair->first && trianglePointPair->second)
+		if (trianglePointPair.first && trianglePointPair.second)
 		{
-			Triangle triangleHit = *trianglePointPair->first;
-			Point pointHit = *trianglePointPair->second;
+			Triangle triangleHit = *trianglePointPair.first;
+			Point pointHit = *trianglePointPair.second;
 			Point offset(startPoint->Direction);
 			offset.MultiplyByLambda(-1);
 			offset.MultiplyByLambda(0.001f);
@@ -91,14 +91,14 @@ float Camera::CpuTrace(const std::vector<LightSource*>& lights, const std::vecto
 
 bool Camera::LightHitBeforeTriangle(LightSource & light, Triangle *triangles, const Vector & ray, int triengles_len)
 {
-	std::pair<Triangle*, Point*> *TrianglePointPair = Triangle::ClosestTriangleHit(triangles, ray, triengles_len);
+	Pair TrianglePointPair = Triangle::ClosestTriangleHit(triangles, ray, triengles_len);
 
-	if (!TrianglePointPair || !(*TrianglePointPair).second)
+	if (!TrianglePointPair.empty || !TrianglePointPair.second)
 	{
 		return true;
 	}
 
-	Point pointHit = *(*TrianglePointPair).second;
+	Point pointHit = *TrianglePointPair.second;
 	if (Point::Distance(light.location, ray.Location) < Point::Distance(pointHit, ray.Location))
 	{
 		return true;

@@ -129,7 +129,7 @@ Point Triangle::GetPointOnHalfSphere(Triangle hitTriangle, bool backfacing)
 	return randomPoint;
 }
 
-std::pair<Triangle*, Point*> *Triangle::ClosestTriangleHit(Triangle *triangles, Vector ray, int triangles_len)
+Pair Triangle::ClosestTriangleHit(Triangle *triangles, Vector ray, int triangles_len)
 {
 	Point *closest = NULL;
 	Triangle *hitTriangle = NULL;
@@ -144,8 +144,8 @@ std::pair<Triangle*, Point*> *Triangle::ClosestTriangleHit(Triangle *triangles, 
 	}
 	if (!hitTriangle)
 	{
-		return NULL;
+		return Pair();
 	}
-	return &std::make_pair(hitTriangle, closest);
+	return Pair(hitTriangle, closest);
 }
 

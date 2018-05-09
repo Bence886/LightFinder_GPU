@@ -12,6 +12,7 @@
 #include "LightSource.h"
 #include "Triangle.h"
 #include "Point.h"
+#include "Pair.h"
 
 Camera *dev_cameras;
 LightSource *dev_lights;
@@ -146,12 +147,12 @@ __device__ float Trace(LightSource* dev_lights, Triangle *dev_triangles, Vector 
 			LightSource *aktLight = directHitLights[0];
 			return aktLight->intensity;
 		}
-		std::pair<Triangle*, Point*> *trianglePointPair = Triangle::ClosestTriangleHit(dev_triangles, *startPoint, dev_triangles_len);
+		Pair trianglePointPair = Triangle::ClosestTriangleHit(dev_triangles, *startPoint, dev_triangles_len);
 
-		if (trianglePointPair->first && trianglePointPair->second)
+		if (trianglePointPair.first && trianglePointPair.second)
 		{
-			Triangle triangleHit = *trianglePointPair->first;
-			Point pointHit = *trianglePointPair->second;
+			Triangle triangleHit = *trianglePointPair.first;
+			Point pointHit = *trianglePointPair.second;
 			Point offset(startPoint->Direction);
 			offset.MultiplyByLambda(-1);
 			offset.MultiplyByLambda(0.001f);

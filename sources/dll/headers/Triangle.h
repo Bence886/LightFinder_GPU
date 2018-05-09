@@ -12,6 +12,8 @@
 #include "curand.h"
 #include "curand_kernel.h"
 
+#include "Pair.h"
+
 class Triangle
 {
 public:
@@ -28,7 +30,7 @@ public:
 
 	CUDA_CALLABLE_MEMBER Point *InsideTriangle(Vector ray);
 
-	CUDA_CALLABLE_MEMBER static std::pair<Triangle*, Point*> *ClosestTriangleHit(Triangle *triangles, Vector ray, int triengless_len);
+	CUDA_CALLABLE_MEMBER static Pair ClosestTriangleHit(Triangle *triangles, Vector ray, int triengless_len);
 
 #ifdef __CUDACC__
 	__device__ static Point GetPointOnSphere(const Point &origin);

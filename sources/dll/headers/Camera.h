@@ -6,6 +6,7 @@
 #include "LightSource.h"
 #include "Vector.h"
 #include "Triangle.h"
+#include "Pair.h"
 
 #include "cuda_runtime.h"
 
