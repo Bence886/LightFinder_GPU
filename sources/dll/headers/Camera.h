@@ -31,7 +31,6 @@ public:
 #else
 	void StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangle*> triangles);
 #endif
-
 	CUDA_CALLABLE_MEMBER static bool LightHitBeforeTriangle(LightSource &light, Triangle *triangles, const Vector &ray, int triangles_len);
 
 private:
@@ -40,7 +39,5 @@ private:
 #else
 	float CpuTrace(const std::vector<LightSource*> &lights, const std::vector<Triangle*> triangles, Vector *ray, int dept);
 #endif
-
-
 };
 

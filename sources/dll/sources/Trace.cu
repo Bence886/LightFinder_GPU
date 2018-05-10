@@ -3,9 +3,6 @@
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
 
-#include <thrust/host_vector.h>
-#include <thrust/device_vector.h>
-
 #include "Log.h"
 
 #include "Camera.h"
@@ -18,6 +15,7 @@ Camera *dev_cameras;
 LightSource *dev_lights;
 Triangle *dev_triangles;
 int dev_triangles_len, dev_lights_len, dev_cameras_len;
+curandState *dev_states;
 
 cudaError CopyToDevice(Scene * s)
 {
@@ -72,31 +70,37 @@ cudaError CopyToDevice(Scene * s)
 	dev_cameras_len = s->cameras.size();
 	dev_triangles_len = s->triangles.size();
 	dev_lights_len = s->lights.size();
+
+	cudaMalloc((void**)&dev_states, dev_cameras_len * SAMPLING * sizeof(curandState));
+	if (e != cudaSuccess)
+	{
+		WriteLog("Error Mallocing dev_curandState: ", true, Log::Exception);
+		return e;
+	}
 	return e;
 }
 
 void StartSequential()
 {
 	WriteLog("Started sequential GPU trace", true, Log::Trace);
-	Triangle::InitCurand(dev_cameras_len * SAMPLING * 64);
-	SequentialTrace << <1, 1 >> > (dev_triangles, dev_lights, dev_cameras, dev_triangles_len, dev_lights_len, dev_cameras_len);
+	SequentialTrace << <1, 1 >> > (dev_triangles, dev_lights, dev_cameras, dev_triangles_len, dev_lights_len, dev_cameras_len, dev_states);
 	WriteLog("Finished sequential GPU trace", true, Log::Trace);
 
 }
 
 
-__global__ void SequentialTrace(Triangle *dev_triangles, LightSource *dev_lights, Camera *dev_cameras, int dev_triangles_len, int dev_lights_len, int dev_cameras_len)
+__global__ void SequentialTrace(Triangle *dev_triangles, LightSource *dev_lights, Camera *dev_cameras, int dev_triangles_len, int dev_lights_len, int dev_cameras_len, curandState *state)
 {
-	Triangle::Dev_InitCuRand();
+	Triangle::Dev_InitCuRand(state);
 	for (int j = 0; j < dev_cameras_len; j++)
 	{
 		for (int i = 0; i < SAMPLING; i++)
 		{
 			printf("LookNum: %d \n", i);
 
-			Point ray = Triangle::GetPointOnSphere(dev_cameras[j].origin);
+			Point ray = Triangle::GetPointOnSphere(dev_cameras[j].origin, state);
 			Vector vector(dev_cameras[j].origin, ray);
-			float a = Trace(dev_lights, dev_triangles, &vector, MAX_DEPT, dev_triangles_len, dev_lights_len, dev_cameras_len);
+			float a = Trace(dev_lights, dev_triangles, &vector, MAX_DEPT, dev_triangles_len, dev_lights_len, dev_cameras_len, state);
 			ray = vector.Direction;
 			ray.MultiplyByLambda(a);
 			if (a != 0)
@@ -107,7 +111,7 @@ __global__ void SequentialTrace(Triangle *dev_triangles, LightSource *dev_lights
 	}
 }
 
-__device__ float Trace(LightSource* dev_lights, Triangle *dev_triangles, Vector *startPoint, int dept, int dev_triangles_len, int dev_lights_len, int dev_cameras_len)
+__device__ float Trace(LightSource* dev_lights, Triangle *dev_triangles, Vector *startPoint, int dept, int dev_triangles_len, int dev_lights_len, int dev_cameras_len, curandState *state)
 {
 	for (int i = 0; i < dept; i++)
 	{
@@ -153,7 +157,7 @@ __device__ float Trace(LightSource* dev_lights, Triangle *dev_triangles, Vector 
 
 			bool backfacing = Point::DotProduct(triangleHit.normal, startPoint->Direction) > 0;
 
-			startPoint = &Vector(pointHit, Triangle::GetPointOnHalfSphere(triangleHit, backfacing));
+			startPoint = &Vector(pointHit, Triangle::GetPointOnHalfSphere(triangleHit, backfacing, state));
 		}
 	}
 	return 0;
@@ -162,21 +166,19 @@ __device__ float Trace(LightSource* dev_lights, Triangle *dev_triangles, Vector 
 void startParallel(int block, int thread) //cameras / sampling
 {
 	WriteLog("Started parallel GPU trace", true, Log::Trace);
-	Triangle::InitCurand(dev_cameras_len * SAMPLING * 64);
-	ParallelTrace << <block, thread >> > (dev_triangles, dev_lights, dev_cameras, dev_triangles_len, dev_lights_len, dev_cameras_len);
+	ParallelTrace << <block, thread >> > (dev_triangles, dev_lights, dev_cameras, dev_triangles_len, dev_lights_len, dev_cameras_len, dev_states);
 	WriteLog("Finished parallel GPU trace", true, Log::Trace);
-
 }
 
-__global__ void ParallelTrace(Triangle *dev_triangles, LightSource *dev_lights, Camera *dev_cameras, int dev_triangles_len, int dev_lights_len, int dev_cameras_len)
+__global__ void ParallelTrace(Triangle *dev_triangles, LightSource *dev_lights, Camera *dev_cameras, int dev_triangles_len, int dev_lights_len, int dev_cameras_len, curandState *state)
 {
 	int j = blockIdx.x;
 	int i = threadIdx.x;
-	Triangle::Dev_InitCuRand();
+	Triangle::Dev_InitCuRand(state);
 	printf("Camera Num: %d\tLook Num: %d \n", j, i);
-	Point ray = Triangle::GetPointOnSphere(dev_cameras[j].origin);
+	Point ray = Triangle::GetPointOnSphere(dev_cameras[j].origin, state);
 	Vector vector(dev_cameras[j].origin, ray);
-	float a = Trace(dev_lights, dev_triangles, &vector, MAX_DEPT, dev_triangles_len, dev_lights_len, dev_cameras_len);
+	float a = Trace(dev_lights, dev_triangles, &vector, MAX_DEPT, dev_triangles_len, dev_lights_len, dev_cameras_len, state);
 	ray = vector.Direction;
 	ray.MultiplyByLambda(a);
 	if (a != 0)
@@ -186,6 +188,8 @@ __global__ void ParallelTrace(Triangle *dev_triangles, LightSource *dev_lights, 
 			dev_cameras[j].lookDirections[i].X, 
 			dev_cameras[j].lookDirections[i].Y, 
 			dev_cameras[j].lookDirections[i].Z);
+		atomicAdd((int*)&dev_cameras[j].lookNum, 1);
+
 	}
 }
 
@@ -200,7 +204,18 @@ cudaError CopyFromDevice(Scene * s)
 			WriteLog("Copy back dev_cameras: ", true, Log::Error);
 			return e;
 		}
+		for (int j = 0; j < SAMPLING-1; j++)
+		{
+			for (int k = j; k < SAMPLING; k++)
+			{
+				if (s->cameras[i]->lookDirections[j].X < s->cameras[i]->lookDirections[k].X)
+				{
+					Point temp = s->cameras[i]->lookDirections[k];
+					s->cameras[i]->lookDirections[k] = s->cameras[i]->lookDirections[j];
+					s->cameras[i]->lookDirections[j] = temp;
+				}
+			}
+		}
 	}
-
 	return e;
 }

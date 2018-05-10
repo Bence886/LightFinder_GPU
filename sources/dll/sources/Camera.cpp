@@ -1,7 +1,6 @@
 #include "Camera.h"
 
 #include <algorithm>
-
 #include <tuple>
 
 #include "Log.h"
@@ -23,7 +22,7 @@ bool Camera::operator==(const Camera & otherCamera) const
 
 void Camera::StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangle*> triangles)
 {
-	for (int i = 0; i < SAMPLING; i++)
+	/*for (int i = 0; i < SAMPLING; i++)
 	{
 		Point ray = Triangle::GetPointOnSphere(origin);
 		Vector vector(origin, ray);
@@ -36,7 +35,7 @@ void Camera::StartCPUTrace(std::vector<LightSource*> lights, std::vector<Triangl
 			lookDirections[lookNum++] = ray;
 		}
 		WriteLog(std::string("Look direction found: ") + ray.ToFile(), true, Log::Trace);
-	}
+	}*/
 }
 
 float Camera::CpuTrace(const std::vector<LightSource*>& lights, const std::vector<Triangle*> triangles, Vector * startPoint, int dept)
@@ -82,7 +81,7 @@ float Camera::CpuTrace(const std::vector<LightSource*>& lights, const std::vecto
 
 			bool backfacing = Point::DotProduct(triangleHit.normal, startPoint->Direction) > 0;
 
-			startPoint = &Vector(pointHit, Triangle::GetPointOnHalfSphere(triangleHit, backfacing));
+			//startPoint = &Vector(pointHit, Triangle::GetPointOnHalfSphere(triangleHit, backfacing));
 		}
 	}
 	return 0;

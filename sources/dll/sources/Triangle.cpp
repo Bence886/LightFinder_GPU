@@ -72,28 +72,16 @@ void Triangle::CalcNormal()
 }
 
 #ifdef __CUDACC__
-__device__ curandState *dev_state;
-void Triangle::InitCurand(int size)
-{
-	curandState *state;
-	cudaError e;
-	state = (curandState*)malloc(sizeof(curandState) * size);
-	e = cudaMemcpy(&(dev_state), &state, sizeof(curandState), cudaMemcpyHostToDevice);
-	if (e != cudaSuccess)
-	{
-		WriteLog("Copy dev_state error", true, Log::Exception);
-	}
-}
-void Triangle::Dev_InitCuRand()
+void Triangle::Dev_InitCuRand(curandState *state)
 {
 	int id = threadIdx.x + blockIdx.x * 64;
-	curand_init(1234, id, 0, &dev_state[id]);
+	curand_init(1234, id, 0, &state[id]);
 	printf("Init Curand id: %d\n", id);
 }
-float Triangle::RandomNumber(float Min, float Max)
+float Triangle::RandomNumber(float Min, float Max, curandState * state)
 {
 	int id = threadIdx.x + blockIdx.x * 64;
-	float x = curand_uniform(&dev_state[id]);
+	float x = curand_uniform(&state[id]);
 	x = x * 2 - 1;
 	printf("Id:%d random number: %f\n", id, x);
 	return x;
@@ -104,7 +92,42 @@ float Triangle::RandomNumber(float Min, float Max)
 	return ((float(rand()) / float(RAND_MAX)) * (Max - Min)) + Min;
 }
 #endif
+#ifdef __CUDACC__
+Point Triangle::GetPointOnSphere(const Point & origin, curandState *state)
+{
+	Point randomPoint(RandomNumber(-1, 1, state), RandomNumber(-1, 1, state), RandomNumber(-1, 1, state));
+	while (randomPoint.Length() > 1)
+	{
+		randomPoint = Point(RandomNumber(-1, 1, state), RandomNumber(-1, 1, state), RandomNumber(-1, 1, state));
+	}
+	randomPoint.Normalize();
+	return randomPoint;
+}
+Point Triangle::GetPointOnHalfSphere(Triangle hitTriangle, bool backfacing, curandState *state)
+{
+	Point normal = hitTriangle.normal;
+	if (backfacing)
+	{
+		normal.MultiplyByLambda(-1);
+	}
+	Point direction = Point::CrossProduct(normal, hitTriangle.p1 - hitTriangle.p0);
+	direction.Normalize();
+	Point cross = Point::CrossProduct(normal, direction);
 
+	float x, y, z;
+	x = RandomNumber(-1, 1, state);
+	y = RandomNumber(-1, 1, state);
+	z = RandomNumber(0, 1, state);
+
+	Point randomPoint(
+		x * direction.X + y * cross.X + z * normal.X,
+		x * direction.Y + y * cross.Y + z * normal.Y,
+		x * direction.Z + y * cross.Z + z * normal.Z);
+
+	randomPoint.Normalize();
+	return randomPoint;
+}
+#else
 Point Triangle::GetPointOnSphere(const Point & origin)
 {
 	Point randomPoint(RandomNumber(-1, 1), RandomNumber(-1, 1), RandomNumber(-1, 1));
@@ -140,6 +163,7 @@ Point Triangle::GetPointOnHalfSphere(Triangle hitTriangle, bool backfacing)
 	randomPoint.Normalize();
 	return randomPoint;
 }
+#endif
 
 Pair Triangle::ClosestTriangleHit(Triangle *triangles, Vector ray, int triangles_len)
 {
