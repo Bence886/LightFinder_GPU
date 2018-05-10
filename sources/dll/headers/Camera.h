@@ -10,7 +10,7 @@
 
 #include "cuda_runtime.h"
 
-#define SAMPLING 100
+#define SAMPLING 1023
 #define MAX_DEPT 5
 
 class Camera

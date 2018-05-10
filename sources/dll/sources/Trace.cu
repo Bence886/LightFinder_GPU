@@ -88,7 +88,6 @@ void StartSequential()
 
 }
 
-
 __global__ void SequentialTrace(Triangle *dev_triangles, LightSource *dev_lights, Camera *dev_cameras, int dev_triangles_len, int dev_lights_len, int dev_cameras_len, curandState *state)
 {
 	Triangle::Dev_InitCuRand(state);
@@ -96,7 +95,7 @@ __global__ void SequentialTrace(Triangle *dev_triangles, LightSource *dev_lights
 	{
 		for (int i = 0; i < SAMPLING; i++)
 		{
-			printf("LookNum: %d \n", i);
+			printf("Camera:%d \tTrace:%d \n", j, i);
 
 			Point ray = Triangle::GetPointOnSphere(dev_cameras[j].origin, state);
 			Vector vector(dev_cameras[j].origin, ray);
@@ -175,7 +174,7 @@ __global__ void ParallelTrace(Triangle *dev_triangles, LightSource *dev_lights, 
 	int j = blockIdx.x;
 	int i = threadIdx.x;
 	Triangle::Dev_InitCuRand(state);
-	printf("Camera Num: %d\tLook Num: %d \n", j, i);
+	//printf("Camera Num: %d\tLook Num: %d \n", j, i);
 	Point ray = Triangle::GetPointOnSphere(dev_cameras[j].origin, state);
 	Vector vector(dev_cameras[j].origin, ray);
 	float a = Trace(dev_lights, dev_triangles, &vector, MAX_DEPT, dev_triangles_len, dev_lights_len, dev_cameras_len, state);
@@ -184,7 +183,7 @@ __global__ void ParallelTrace(Triangle *dev_triangles, LightSource *dev_lights, 
 	if (a != 0)
 	{
 		dev_cameras[j].lookDirections[i] = ray;
-		printf("j: %d, i:%d \tX:%, Y:%f, Z:%ff\n", j, i,
+		printf("Block: %d, Thread:%d \tX:%f, Y:%f, Z:%ff\n", j, i,
 			dev_cameras[j].lookDirections[i].X, 
 			dev_cameras[j].lookDirections[i].Y, 
 			dev_cameras[j].lookDirections[i].Z);

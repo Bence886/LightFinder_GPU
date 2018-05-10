@@ -26,7 +26,7 @@ int main()
 	Close();
 	
 	WriteLog("Program finished!", true, Log::Message);
-	std::getchar();
+	//std::getchar();
 	Log::CloseLog();
 	return 0;
 }

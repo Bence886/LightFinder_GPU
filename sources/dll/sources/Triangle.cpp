@@ -74,16 +74,16 @@ void Triangle::CalcNormal()
 #ifdef __CUDACC__
 void Triangle::Dev_InitCuRand(curandState *state)
 {
-	int id = threadIdx.x + blockIdx.x * 64;
+	int id = threadIdx.x * blockIdx.x;
 	curand_init(1234, id, 0, &state[id]);
-	printf("Init Curand id: %d\n", id);
+	//printf("Init Curand id: %d\n", id);
 }
 float Triangle::RandomNumber(float Min, float Max, curandState * state)
 {
-	int id = threadIdx.x + blockIdx.x * 64;
+	int id = threadIdx.x * blockIdx.x;
 	float x = curand_uniform(&state[id]);
 	x = x * 2 - 1;
-	printf("Id:%d random number: %f\n", id, x);
+	//printf("Id:%d random number: %f\n", id, x);
 	return x;
 }
 #else
