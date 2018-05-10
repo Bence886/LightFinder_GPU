@@ -40,7 +40,8 @@ public:
 	static Point GetPointOnHalfSphere(Triangle triangle, bool backfacing);
 #endif
 
-	__device__ static void InitCuRand();
+	__device__ static void Dev_InitCuRand();
+	__host__ static void InitCurand(int size);
 
 private:
 	CUDA_CALLABLE_MEMBER void CalcNormal();

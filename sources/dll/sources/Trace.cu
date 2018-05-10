@@ -78,6 +78,7 @@ cudaError CopyToDevice(Scene * s)
 void StartSequential()
 {
 	WriteLog("Started sequential GPU trace", true, Log::Trace);
+	Triangle::InitCurand(dev_cameras_len * SAMPLING * 64);
 	SequentialTrace << <1, 1 >> > (dev_triangles, dev_lights, dev_cameras, dev_triangles_len, dev_lights_len, dev_cameras_len);
 	WriteLog("Finished sequential GPU trace", true, Log::Trace);
 
@@ -86,7 +87,7 @@ void StartSequential()
 
 __global__ void SequentialTrace(Triangle *dev_triangles, LightSource *dev_lights, Camera *dev_cameras, int dev_triangles_len, int dev_lights_len, int dev_cameras_len)
 {
-	Triangle::InitCuRand();
+	Triangle::Dev_InitCuRand();
 	for (int j = 0; j < dev_cameras_len; j++)
 	{
 		for (int i = 0; i < SAMPLING; i++)
@@ -161,6 +162,7 @@ __device__ float Trace(LightSource* dev_lights, Triangle *dev_triangles, Vector 
 void startParallel(int block, int thread) //cameras / sampling
 {
 	WriteLog("Started parallel GPU trace", true, Log::Trace);
+	Triangle::InitCurand(dev_cameras_len * SAMPLING * 64);
 	ParallelTrace << <block, thread >> > (dev_triangles, dev_lights, dev_cameras, dev_triangles_len, dev_lights_len, dev_cameras_len);
 	WriteLog("Finished parallel GPU trace", true, Log::Trace);
 
@@ -170,7 +172,7 @@ __global__ void ParallelTrace(Triangle *dev_triangles, LightSource *dev_lights, 
 {
 	int j = blockIdx.x;
 	int i = threadIdx.x;
-	Triangle::InitCuRand();
+	Triangle::Dev_InitCuRand();
 	printf("Camera Num: %d\tLook Num: %d \n", j, i);
 	Point ray = Triangle::GetPointOnSphere(dev_cameras[j].origin);
 	Vector vector(dev_cameras[j].origin, ray);

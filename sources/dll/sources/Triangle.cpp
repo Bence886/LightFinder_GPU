@@ -1,6 +1,7 @@
 #include "Triangle.h"
 
 #include "Log.h"
+#include "..\headers\Triangle.h"
 
 Triangle::Triangle(Point p0, Point p1, Point p2)
 {
@@ -71,19 +72,31 @@ void Triangle::CalcNormal()
 }
 
 #ifdef __CUDACC__
-__device__ curandState state;
-float Triangle::RandomNumber(float Min, float Max)
+__device__ curandState *dev_state;
+void Triangle::InitCurand(int size)
 {
-	float x = curand_uniform(&state);
-	x = x *2 -1;
-	//printf("Generated random number: %f\n", x);
-	return x;
+	curandState *state;
+	cudaError e;
+	state = (curandState*)malloc(sizeof(curandState) * size);
+	e = cudaMemcpy(&(dev_state), &state, sizeof(curandState), cudaMemcpyHostToDevice);
+	if (e != cudaSuccess)
+	{
+		WriteLog("Copy dev_state error", true, Log::Exception);
+	}
 }
-void Triangle::InitCuRand()
+void Triangle::Dev_InitCuRand()
 {
 	int id = threadIdx.x + blockIdx.x * 64;
-	curand_init(1234, id, 0, &state);
+	curand_init(1234, id, 0, &dev_state[id]);
 	printf("Init Curand id: %d\n", id);
+}
+float Triangle::RandomNumber(float Min, float Max)
+{
+	int id = threadIdx.x + blockIdx.x * 64;
+	float x = curand_uniform(&dev_state[id]);
+	x = x * 2 - 1;
+	printf("Id:%d random number: %f\n", id, x);
+	return x;
 }
 #else
 float Triangle::RandomNumber(float Min, float Max)
